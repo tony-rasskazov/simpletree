@@ -17,7 +17,7 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     foreach (QString header, headers)
         rootData << header;
 
-    _rootItem = new DataItem(rootData, "[root]", "vehicles");
+    _rootItem = new DataItem(rootData, -1, "[root]", "vehicles");
 
     _db = QSqlDatabase::addDatabase("QPSQL");
     _db.setHostName("localhost");
@@ -124,7 +124,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
 
     beginInsertRows(parent, position, position + rows - 1);
     for (int i = 0; i < rows; i++) {
-        DataItem *newItem = parentItem->insertChild(position, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_models");
+        DataItem *newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_models");
         emit newDataItem(newItem);
     }
     endInsertRows();
@@ -196,11 +196,19 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
 
 void TreeModel::setupModelData(DataItem *parent)
 {
-    QSqlQuery q = _db.exec("select * from vehicles;");
+    QSqlQuery vehicles = _db.exec("select * from vehicles;");
+    QSqlQuery models = _db.exec("select * from vehicle_models;");
 
-    while (q.next()) {
-        DataItem *i = _rootItem->insertChild(0, q.record().value(1).toString(), "vehicles", "vehicle_models");
+    while (vehicles.next()) {
+        DataItem *i = _rootItem->insertChild(0, vehicles.record().value(0).toInt(), vehicles.record().value(1).toString(), "vehicles", "vehicle_models");
 
         emit newDataItem(i);
     }
+
+    while (models.next()) {
+        DataItem *i = _rootItem->insertChild(0, vehicles.record().value(0).toInt(), models.record().value(1).toString(), "vehicles", "vehicle_models");
+
+        emit newDataItem(i);
+    }
+
 }

@@ -9,9 +9,9 @@
 class DataItem
 {
 public:
-    explicit DataItem(const QVector<QVariant> &data, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
+    explicit DataItem(const QVector<QVariant> &data, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
 
-    explicit DataItem(const QVector<QVariant> &data, int dbIndex, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
+    //explicit DataItem(const QVector<QVariant> &data, int dbIndex, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
 
     ~DataItem();
 
@@ -22,7 +22,7 @@ public:
 
     DataItem *parent();
 
-    DataItem* insertChild(int position, const QString &title, const QString &itemChildTableName, const QString &itemChildsTableName);
+    DataItem* insertChild(int position, int id, const QString &title, const QString &itemChildTableName, const QString &itemChildsTableName);
     bool removeChildren(int position, int count);
 
     int childNumber() const;
@@ -56,13 +56,15 @@ private:
     QString _title;
 
     QList<DataItem*> _childItems;
+    QHash<int, DataItem*> _childItemsById;
+
     QVector<QVariant> _itemData;
     DataItem *_parentItem;
 
     QString _dbTableName;
     QString _dbChildTableName;
 
-    int _dbIndex;
+    int _id;
     int _dbParentIndex;
 
     bool _changed;

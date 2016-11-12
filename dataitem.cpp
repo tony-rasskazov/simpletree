@@ -5,11 +5,12 @@
 
 #include <QDebug>
 
-DataItem::DataItem(const QVector<QVariant> &data, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent)
+DataItem::DataItem(const QVector<QVariant> &data, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent)
     : _level(parent == nullptr ? -1 : parent->_level + 1)
     , _dbTableName(dbTableName)
     , _dbChildTableName(dbChildTableName)
     , _changed(false)
+    , _id(id)
 {
 //    qDebug() << "DataItem::DataItem" << dbTableName << dbChildTableName << "data" << data;
 
@@ -20,21 +21,6 @@ DataItem::DataItem(const QVector<QVariant> &data, const QString &dbTableName, co
         _title = _itemData.at(0).toString();
 }
 
-DataItem::DataItem(const QVector<QVariant> &data, int dbIndex, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent)
-    : _level(parent == nullptr ? -1 : parent->_level + 1)
-    , _dbTableName(dbTableName)
-    , _dbChildTableName(dbChildTableName)
-    , _changed(false)
-    , _dbIndex(dbIndex)
-{
-//    qDebug() << "DataItem::DataItem" << dbTableName << dbChildTableName << "dbIndex" << dbIndex << "data" << data;
-
-    _parentItem = parent;
-    _itemData = data;
-
-    if (_itemData.size() > 0)
-        _title = _itemData.at(0).toString();
-}
 
 DataItem::~DataItem()
 {
@@ -64,7 +50,7 @@ int DataItem::columnCount() const
     return _itemData.count();
 }
 
-DataItem* DataItem::insertChild(int position, const QString &title, const QString &itemTableName, const QString &itemChildsTableName)
+DataItem* DataItem::insertChild(int position, int id, const QString &title, const QString &itemTableName, const QString &itemChildsTableName)
 {
 //    qDebug() << "DataItem::insertChildren " << itemTableName << itemChildsTableName << _title << "position" <<  position <<  "count" << count;
 
@@ -74,7 +60,7 @@ DataItem* DataItem::insertChild(int position, const QString &title, const QStrin
     QVector<QVariant> data(1);
 
     data[0] = title;
-    DataItem *item = new DataItem(data, itemTableName, itemChildsTableName, this);
+    DataItem *item = new DataItem(data, id, itemTableName, itemChildsTableName, this);
 
     _childItems.insert(position, item);
 
@@ -113,6 +99,7 @@ bool DataItem::setData(int column, const QVariant &value)
     //    return false;
 
     _title = value.toString();
+    _changed = true;
 
     return true;
 }
@@ -149,12 +136,12 @@ void DataItem::setDbTableName(const QString &dbTableName)
 
 int DataItem::dbIndex() const
 {
-    return _dbIndex;
+    return _id;
 }
 
 void DataItem::setDbIndex(int dbIndex)
 {
-    _dbIndex = dbIndex;
+    _id = dbIndex;
 }
 
 int DataItem::dbParentIndex() const

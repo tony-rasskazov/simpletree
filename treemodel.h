@@ -2,10 +2,14 @@
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 
-#include <QAbstractItemModel>
-#include <QModelIndex>
 #include <QVariant>
+#include <QHash>
+
+#include <QModelIndex>
+
+#include <QAbstractItemModel>
 #include <QSqlDatabase>
+
 
 class DataItem;
 
