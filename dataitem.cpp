@@ -63,6 +63,7 @@ DataItem* DataItem::insertChild(int position, int id, const QString &title, cons
     DataItem *item = new DataItem(data, id, itemTableName, itemChildsTableName, this);
 
     _childItems.insert(position, item);
+    _childItemsById.insert(id, item);
 
     return item;
 }
@@ -81,6 +82,11 @@ bool DataItem::removeChildren(int position, int count)
         delete _childItems.takeAt(position);
 
     return true;
+}
+
+DataItem *DataItem::getChildById(int id)
+{
+    return _childItemsById.value(id, nullptr);
 }
 
 QVariant DataItem::data(int column) const

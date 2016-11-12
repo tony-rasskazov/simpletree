@@ -206,7 +206,7 @@ void TreeModel::setupModelData(DataItem *parent)
     }
 
     while (models.next()) {
-        DataItem *i = _rootItem->insertChild(0, vehicles.record().value(0).toInt(), models.record().value(1).toString(), "vehicles", "vehicle_models");
+        DataItem *i = _rootItem->getChildById(models.record().value(2).toInt())->insertChild(0, models.record().value(0).toInt(), models.record().value(1).toString(), "vehicles", "vehicle_models");
 
         emit newDataItem(i);
     }

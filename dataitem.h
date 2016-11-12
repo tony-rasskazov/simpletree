@@ -25,6 +25,8 @@ public:
     DataItem* insertChild(int position, int id, const QString &title, const QString &itemChildTableName, const QString &itemChildsTableName);
     bool removeChildren(int position, int count);
 
+    DataItem *getChildById(int id);
+
     int childNumber() const;
 
     bool setData(int column, const QVariant &value);
