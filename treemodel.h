@@ -37,6 +37,11 @@ public:
 
 signals:
     void dataItemChanged(DataItem *item);
+    void newDataItem(DataItem *item);
+
+public slots:
+    void onDataItemChanged(DataItem *item);
+    void onNewDataItem(DataItem *item);
 
 private:
     void setupModelData(DataItem *parent);

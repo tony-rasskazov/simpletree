@@ -64,12 +64,12 @@ int DataItem::columnCount() const
     return _itemData.count();
 }
 
-bool DataItem::insertChild(int position, const QString &title, const QString &itemTableName, const QString &itemChildsTableName)
+DataItem* DataItem::insertChild(int position, const QString &title, const QString &itemTableName, const QString &itemChildsTableName)
 {
 //    qDebug() << "DataItem::insertChildren " << itemTableName << itemChildsTableName << _title << "position" <<  position <<  "count" << count;
 
     if (position < 0 || position > _childItems.size())
-        return false;
+        return nullptr;
 
     QVector<QVariant> data(1);
 
@@ -78,7 +78,7 @@ bool DataItem::insertChild(int position, const QString &title, const QString &it
 
     _childItems.insert(position, item);
 
-    return true;
+    return item;
 }
 
 DataItem *DataItem::parent()
@@ -107,7 +107,7 @@ QVariant DataItem::data(int column) const
 
 bool DataItem::setData(int column, const QVariant &value)
 {
-    qDebug() << "DataItem::setData " << dbTableName() << "value" << value;
+//    qDebug() << "DataItem::setData " << dbTableName() << "value" << value;
 
    // if (column < 0 || (column != _level))
     //    return false;
@@ -165,4 +165,19 @@ int DataItem::dbParentIndex() const
 void DataItem::setDbParentIndex(int dbParentIndex)
 {
     _dbParentIndex = dbParentIndex;
+}
+
+QString DataItem::title() const
+{
+    return _title;
+}
+
+void DataItem::setTitle(const QString &title)
+{
+    _title = title;
+}
+
+QString DataItem::toString() const
+{
+    return QString("(%1,%2,%3)").arg(_title).arg(_dbTableName).arg(_dbChildTableName);
 }

@@ -19,7 +19,6 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
 
     _rootItem = new DataItem(rootData, "[root]", "vehicles");
 
-
     _db = QSqlDatabase::addDatabase("QPSQL");
     _db.setHostName("localhost");
     _db.setDatabaseName("vehicles_db");
@@ -28,6 +27,10 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     _dbOk = _db.open();
 
     qDebug() << (_dbOk ? "TreeModel::TreeModel db connected" : "TreeModel::TreeModel db NOT connected!");
+
+    connect(this, &TreeModel::dataItemChanged, this, &TreeModel::onDataItemChanged);
+    connect(this, &TreeModel::newDataItem, this, &TreeModel::onNewDataItem);
+
 
     setupModelData(_rootItem);
 }
@@ -78,6 +81,18 @@ DataItem *TreeModel::getItem(const QModelIndex &index) const
     return _rootItem;
 }
 
+void TreeModel::onDataItemChanged(DataItem *item)
+{
+    qDebug() << "TreeModel::dataItemChanged" << item->toString();
+
+}
+
+void TreeModel::onNewDataItem(DataItem *item)
+{
+    qDebug() << "TreeModel::onNewDataItem" << item->toString();
+
+}
+
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
@@ -105,11 +120,12 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
 bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
 {
     DataItem *parentItem = getItem(parent);
-    bool success;
+    bool success = true;
 
     beginInsertRows(parent, position, position + rows - 1);
     for (int i = 0; i < rows; i++) {
-        success = success & (parentItem->insertChild(position, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_models"));
+        DataItem *newItem = parentItem->insertChild(position, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_models");
+        emit newDataItem(newItem);
     }
     endInsertRows();
 
@@ -180,14 +196,11 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
 
 void TreeModel::setupModelData(DataItem *parent)
 {
-
     QSqlQuery q = _db.exec("select * from vehicles;");
 
     while (q.next()) {
-        _rootItem->insertChild(0, q.record().value(1).toString(), "vehicles", "vehicle_models");
-        //qDebug() << "YARRR!!!" << ;
+        DataItem *i = _rootItem->insertChild(0, q.record().value(1).toString(), "vehicles", "vehicle_models");
+
+        emit newDataItem(i);
     }
-
-
-    //parent->insertChildren(parent->childCount(), 10, rootItem->columnCount());
 }

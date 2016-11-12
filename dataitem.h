@@ -22,7 +22,7 @@ public:
 
     DataItem *parent();
 
-    bool insertChild(int position, const QString &title, const QString &itemChildTableName, const QString &itemChildsTableName);
+    DataItem* insertChild(int position, const QString &title, const QString &itemChildTableName, const QString &itemChildsTableName);
     bool removeChildren(int position, int count);
 
     int childNumber() const;
@@ -44,6 +44,12 @@ public:
 
     int dbParentIndex() const;
     void setDbParentIndex(int dbParentIndex);
+
+    QString title() const;
+    void setTitle(const QString &title);
+
+
+    QString toString() const;
 
 private:
     int _level;
