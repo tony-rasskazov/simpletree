@@ -3,109 +3,93 @@
 
 #include <QStringList>
 
+#include <QDebug>
+
 TreeItem::TreeItem(const QVector<QVariant> &data, TreeItem *parent)
-    : _level(parent == nullptr ? 0 : parent->_level + 1)
+    : _level(parent == nullptr ? -1 : parent->_level + 1)
 {
-    parentItem = parent;
-    itemData = data;
+    qDebug() << "TreeItem::TreeItem level" << _level << "data" << data;
+    _parentItem = parent;
+    _itemData = data;
 }
+
 TreeItem::~TreeItem()
 {
-    qDeleteAll(childItems);
+    qDeleteAll(_childItems);
 }
 
 TreeItem *TreeItem::child(int number)
 {
-    return childItems.value(number);
+    return _childItems.value(number);
 }
 
 int TreeItem::childCount() const
 {
-    return childItems.count();
+    return _childItems.count();
 }
 
 int TreeItem::childNumber() const
 {
-    if (parentItem)
-        return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
+    if (_parentItem)
+        return _parentItem->_childItems.indexOf(const_cast<TreeItem*>(this));
 
     return 0;
 }
 
 int TreeItem::columnCount() const
 {
-    return itemData.count();
+    return _itemData.count();
 }
 
-QVariant TreeItem::data(int column) const
+bool TreeItem::insertChildren(int position, int count)
 {
-    return itemData.value(column);
-}
+    qDebug() << "TreeItem::insertChildren position" <<  position <<  "count" << count;
 
-bool TreeItem::insertChildren(int position, int count, int columns)
-{
-    if (position < 0 || position > childItems.size())
+    if (position < 0 || position > _childItems.size())
         return false;
 
     for (int row = 0; row < count; ++row) {
-        QVector<QVariant> data(columns);
+        QVector<QVariant> data(1);
         TreeItem *item = new TreeItem(data, this);
-        childItems.insert(position, item);
+        _childItems.insert(position, item);
     }
-
-    return true;
-}
-
-bool TreeItem::insertColumns(int position, int columns)
-{
-    if (position < 0 || position > itemData.size())
-        return false;
-
-    for (int column = 0; column < columns; ++column)
-        itemData.insert(position, QVariant());
-
-    foreach (TreeItem *child, childItems)
-        child->insertColumns(position, columns);
 
     return true;
 }
 
 TreeItem *TreeItem::parent()
 {
-    return parentItem;
+    return _parentItem;
 }
 
 bool TreeItem::removeChildren(int position, int count)
 {
-    if (position < 0 || position + count > childItems.size())
+    if (position < 0 || position + count > _childItems.size())
         return false;
 
     for (int row = 0; row < count; ++row)
-        delete childItems.takeAt(position);
+        delete _childItems.takeAt(position);
 
     return true;
 }
 
-bool TreeItem::removeColumns(int position, int columns)
+QVariant TreeItem::data(int column) const
 {
-    if (position < 0 || position + columns > itemData.size())
-        return false;
-
-    for (int column = 0; column < columns; ++column)
-        itemData.remove(position);
-
-    foreach (TreeItem *child, childItems)
-        child->removeColumns(position, columns);
-
-    return true;
+    if (_level == -1) {
+        return _itemData.value(column);
+    } else
+        return column == _level ? _title : QVariant();
 }
 
 bool TreeItem::setData(int column, const QVariant &value)
 {
-    if (column < 0 || column >= itemData.size())
+    qDebug() << "TreeItem::setData column" << column << "value" << value;
+
+    if (column < 0 || (column != _level))
         return false;
 
-    itemData[column] = value;
+    _title = value.toString();
+
     return true;
 }
 
@@ -114,7 +98,7 @@ int TreeItem::level() const
     return _level;
 }
 
-void TreeItem::setLevel(const uint &level)
+void TreeItem::setLevel(const int &level)
 {
     _level = level;
 }

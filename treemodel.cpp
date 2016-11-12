@@ -43,7 +43,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
         return 0;
 
     TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
-    if (item && ((item->level() - 1) == index.column() )) {
+    if (item && (item->level() == index.column() )) {
         return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
     } else {
         return QAbstractItemModel::flags(index) ^ Qt::ItemIsSelectable;
@@ -83,16 +83,6 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
         return QModelIndex();
 }
 
-bool TreeModel::insertColumns(int position, int columns, const QModelIndex &parent)
-{
-    bool success;
-
-    beginInsertColumns(parent, position, position + columns - 1);
-    success = rootItem->insertColumns(position, columns);
-    endInsertColumns();
-
-    return success;
-}
 
 bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
 {
@@ -100,7 +90,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, rootItem->columnCount());
+    success = parentItem->insertChildren(position, rows);
     endInsertRows();
 
     return success;
@@ -118,20 +108,6 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
         return QModelIndex();
 
     return createIndex(parentItem->childNumber(), 0, parentItem);
-}
-
-bool TreeModel::removeColumns(int position, int columns, const QModelIndex &parent)
-{
-    bool success;
-
-    beginRemoveColumns(parent, position, position + columns - 1);
-    success = rootItem->removeColumns(position, columns);
-    endRemoveColumns();
-
-    if (rootItem->columnCount() == 0)
-        removeRows(0, rowCount());
-
-    return success;
 }
 
 bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent)
@@ -183,5 +159,5 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
 
 void TreeModel::setupModelData(TreeItem *parent)
 {
-    parent->insertChildren(parent->childCount(), 10, rootItem->columnCount());
+    //parent->insertChildren(parent->childCount(), 10, rootItem->columnCount());
 }

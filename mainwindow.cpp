@@ -1,5 +1,7 @@
 #include "mainwindow.h"
+
 #include "treemodel.h"
+#include"treeitem.h"
 
 #include <QFile>
 
@@ -11,12 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     QStringList headers;
     headers << tr("Vehicle") << tr("Model") << tr("Id");
 
-    TreeModel *model = new TreeModel(headers);
+    _model = new TreeModel(headers);
 
-
-    view->setModel(model);
-    for (int column = 0; column < model->columnCount(); ++column)
-        view->resizeColumnToContents(column);
+    view->setModel(_model);
 
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
@@ -26,53 +25,63 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(insertVehicleAction, &QAction::triggered, this, &MainWindow::insertVehicle);
     connect(removeVehicleAction, &QAction::triggered, this, &MainWindow::removeVehicle);
-    connect(insertVehicleModelAction, &QAction::triggered, this, &MainWindow::insertVehicleModel);
+    connect(addVehicleModelAction, &QAction::triggered, this, &MainWindow::insertVehicleModel);
 
     updateActions();
+    resizeAllColumnsToContents();
+
 }
 
 void MainWindow::insertVehicleModel()
 {
     QModelIndex index = view->selectionModel()->currentIndex();
-    QAbstractItemModel *model = view->model();
 
-    if (model->columnCount(index) == 0) {
-        if (!model->insertColumn(0, index))
+    TreeItem *i = _model->getItem(index);
+
+    if (i && i->level() == 0) {
+
+        if (!_model->insertRow(0, index))
             return;
+
+        QModelIndex child = _model->index(0, 1, index);
+        _model->setData(child, QVariant("New Model"), Qt::EditRole);
+
+        view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
+
+        updateActions();
+        resizeAllColumnsToContents();
+    } else if (i && i->level() == 1) {
+
+        QModelIndex toVehcleIndex = _model->index(i->parent()->childNumber(), 0);
+
+        if (!_model->insertRow(0, toVehcleIndex))
+            return;
+
+        QModelIndex child = _model->index(0, 1, toVehcleIndex);
+        _model->setData(child, QVariant("New Model"), Qt::EditRole);
+
+        view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
+
+        updateActions();
+        resizeAllColumnsToContents();
+
     }
-
-    if (!model->insertRow(0, index))
-        return;
-
-    for (int column = 0; column < model->columnCount(index); ++column) {
-
-        QModelIndex child = model->index(0, column, index);
-
-        model->setData(child, QVariant("[No data]"), Qt::EditRole);
-
-        if (!model->headerData(column, Qt::Horizontal).isValid())
-            model->setHeaderData(column, Qt::Horizontal, QVariant("[No header]"), Qt::EditRole);
-    }
-
-    view->selectionModel()->setCurrentIndex(model->index(0, 0, index),
-                                            QItemSelectionModel::ClearAndSelect);
-    updateActions();
 }
 
 void MainWindow::insertVehicle()
 {
-    QModelIndex index = view->selectionModel()->currentIndex();
     QAbstractItemModel *model = view->model();
 
-    if (!model->insertRow(index.row()+1, index.parent()))
+    if (!model->insertRow(0))
         return;
 
-    updateActions();
+    QModelIndex child = model->index(0, 0);
+    model->setData(child, QVariant("New Vehicle"), Qt::EditRole);
 
-    for (int column = 0; column < model->columnCount(index.parent()); ++column) {
-        QModelIndex child = model->index(index.row()+1, column, index.parent());
-        model->setData(child, QVariant("[No data]"), Qt::EditRole);
-    }
+    view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
+
+    updateActions();
+    resizeAllColumnsToContents();
 }
 
 
@@ -90,8 +99,9 @@ void MainWindow::updateActions()
     removeVehicleAction->setEnabled(hasSelection);
 
     bool hasCurrent = view->selectionModel()->currentIndex().isValid();
-    insertVehicleAction->setEnabled(hasCurrent);
+    //insertVehicleAction->setEnabled(hasCurrent);
 
+    //view->con
     if (hasCurrent) {
         view->closePersistentEditor(view->selectionModel()->currentIndex());
 
@@ -106,7 +116,21 @@ void MainWindow::updateActions()
 
 void MainWindow::on_actionApply_changes_triggered()
 {
+    resizeAllColumnsToContents();
+}
+
+void MainWindow::resizeAllColumnsToContents()
+{
     for (int column = 0; column < view->model()->columnCount(); ++column)
         view->resizeColumnToContents(column);
+}
 
+void MainWindow::on_toolButton_newVehicle_clicked()
+{
+    insertVehicle();
+}
+
+void MainWindow::on_toolButton_newVehicleModel_clicked()
+{
+    insertVehicleModel();
 }

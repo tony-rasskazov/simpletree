@@ -5,6 +5,7 @@
 #include <QVariant>
 #include <QVector>
 
+//todo: rename to DataItem
 class TreeItem
 {
 public:
@@ -15,29 +16,33 @@ public:
     int childCount() const;
 
     int columnCount() const;
-    QVariant data(int column) const;
-
-    bool insertChildren(int position, int count, int columns);
-    bool insertColumns(int position, int columns);
 
     TreeItem *parent();
 
+    bool insertChildren(int position, int count);
     bool removeChildren(int position, int count);
-    bool removeColumns(int position, int columns);
 
     int childNumber() const;
+
     bool setData(int column, const QVariant &value);
+    QVariant data(int column) const;
 
     int level() const;
-    void setLevel(const uint &level);
+    void setLevel(const int &level);
 
 private:
     int _level;
+    QString _title;
 
-    QList<TreeItem*> childItems;
-    QVector<QVariant> itemData;
-    TreeItem *parentItem;
+    QList<TreeItem*> _childItems;
+    QVector<QVariant> _itemData;
+    TreeItem *_parentItem;
 
+    QString _dbTableName;
+    QString _dbChildTableName;
+
+    int _dbIndex;
+    int _dbParentIndex;
 };
 
 #endif // TREEITEM_H
