@@ -9,11 +9,14 @@ MainWindow::MainWindow(QWidget *parent)
     setupUi(this);
 
     QStringList headers;
-    headers << tr("Title") << tr("Description");
+    headers << tr("Vehicle") << tr("Model") << tr("Id");
 
-    QFile file(":/default.txt");
+    QFile file("default.txt");
+
     file.open(QIODevice::ReadOnly);
+
     TreeModel *model = new TreeModel(headers, file.readAll());
+
     file.close();
 
     view->setModel(model);
@@ -22,14 +25,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
-    connect(view->selectionModel(), &QItemSelectionModel::selectionChanged,
-            this, &MainWindow::updateActions);
+    connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::updateActions);
 
     connect(actionsMenu, &QMenu::aboutToShow, this, &MainWindow::updateActions);
+
     connect(insertRowAction, &QAction::triggered, this, &MainWindow::insertRow);
-    connect(insertColumnAction, &QAction::triggered, this, &MainWindow::insertColumn);
     connect(removeRowAction, &QAction::triggered, this, &MainWindow::removeRow);
-    connect(removeColumnAction, &QAction::triggered, this, &MainWindow::removeColumn);
     connect(insertChildAction, &QAction::triggered, this, &MainWindow::insertChild);
 
     updateActions();
@@ -65,7 +66,6 @@ bool MainWindow::insertColumn()
     QAbstractItemModel *model = view->model();
     int column = view->selectionModel()->currentIndex().column();
 
-    // Insert a column in the parent item.
     bool changed = model->insertColumn(column + 1);
     if (changed)
         model->setHeaderData(column + 1, Qt::Horizontal, QVariant("[No header]"), Qt::EditRole);
@@ -96,7 +96,6 @@ bool MainWindow::removeColumn()
     QAbstractItemModel *model = view->model();
     int column = view->selectionModel()->currentIndex().column();
 
-    // Insert columns in each child of the parent item.
     bool changed = model->removeColumn(column);
 
     if (changed)
@@ -117,11 +116,9 @@ void MainWindow::updateActions()
 {
     bool hasSelection = !view->selectionModel()->selection().isEmpty();
     removeRowAction->setEnabled(hasSelection);
-    removeColumnAction->setEnabled(hasSelection);
 
     bool hasCurrent = view->selectionModel()->currentIndex().isValid();
     insertRowAction->setEnabled(hasCurrent);
-    insertColumnAction->setEnabled(hasCurrent);
 
     if (hasCurrent) {
         view->closePersistentEditor(view->selectionModel()->currentIndex());

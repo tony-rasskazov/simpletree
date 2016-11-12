@@ -35,7 +35,7 @@ public:
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
 
 private:
-    void setupModelData(const QStringList &lines, TreeItem *parent);
+    void setupModelData(TreeItem *parent);
     TreeItem *getItem(const QModelIndex &index) const;
 
     TreeItem *rootItem;
