@@ -11,6 +11,9 @@ TreeItem::TreeItem(const QVector<QVariant> &data, TreeItem *parent)
     qDebug() << "TreeItem::TreeItem level" << _level << "data" << data;
     _parentItem = parent;
     _itemData = data;
+
+    if (_itemData.size() > 0)
+        _title = _itemData.at(0).toString();
 }
 
 TreeItem::~TreeItem()
@@ -43,13 +46,14 @@ int TreeItem::columnCount() const
 
 bool TreeItem::insertChildren(int position, int count)
 {
-    qDebug() << "TreeItem::insertChildren position" <<  position <<  "count" << count;
+    qDebug() << "TreeItem::insertChildren " << _title << "position" <<  position <<  "count" << count;
 
     if (position < 0 || position > _childItems.size())
         return false;
 
     for (int row = 0; row < count; ++row) {
         QVector<QVariant> data(1);
+        data[0] = QString("vehicle %1").arg(row);
         TreeItem *item = new TreeItem(data, this);
         _childItems.insert(position, item);
     }
@@ -85,8 +89,8 @@ bool TreeItem::setData(int column, const QVariant &value)
 {
     qDebug() << "TreeItem::setData column" << column << "value" << value;
 
-    if (column < 0 || (column != _level))
-        return false;
+   // if (column < 0 || (column != _level))
+    //    return false;
 
     _title = value.toString();
 

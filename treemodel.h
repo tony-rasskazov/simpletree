@@ -37,7 +37,7 @@ public:
 private:
     void setupModelData(TreeItem *parent);
 
-    TreeItem *rootItem;
+    TreeItem *_rootItem;
 };
 
 #endif // TREEMODEL_H

@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     updateActions();
     resizeAllColumnsToContents();
 
+    view->selectionModel()->select(_model->index(0, 0), QItemSelectionModel::ClearAndSelect);
 }
 
 void MainWindow::insertVehicleModel()
@@ -99,9 +100,7 @@ void MainWindow::updateActions()
     removeVehicleAction->setEnabled(hasSelection);
 
     bool hasCurrent = view->selectionModel()->currentIndex().isValid();
-    //insertVehicleAction->setEnabled(hasCurrent);
 
-    //view->con
     if (hasCurrent) {
         view->closePersistentEditor(view->selectionModel()->currentIndex());
 

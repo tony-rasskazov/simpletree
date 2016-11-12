@@ -10,18 +10,18 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     foreach (QString header, headers)
         rootData << header;
 
-    rootItem = new TreeItem(rootData);
-    setupModelData(rootItem);
+    _rootItem = new TreeItem(rootData);
+    setupModelData(_rootItem);
 }
 
 TreeModel::~TreeModel()
 {
-    delete rootItem;
+    delete _rootItem;
 }
 
 int TreeModel::columnCount(const QModelIndex & /* parent */) const
 {
-    return rootItem->columnCount();
+    return _rootItem->columnCount();
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const
@@ -57,14 +57,14 @@ TreeItem *TreeModel::getItem(const QModelIndex &index) const
         if (item)
             return item;
     }
-    return rootItem;
+    return _rootItem;
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return rootItem->data(section);
+        return _rootItem->data(section);
 
     return QVariant();
 }
@@ -104,7 +104,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     TreeItem *childItem = getItem(index);
     TreeItem *parentItem = childItem->parent();
 
-    if (parentItem == rootItem)
+    if (parentItem == _rootItem)
         return QModelIndex();
 
     return createIndex(parentItem->childNumber(), 0, parentItem);
@@ -149,7 +149,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
 
-    bool result = rootItem->setData(section, value);
+    bool result = _rootItem->setData(section, value);
 
     if (result)
         emit headerDataChanged(orientation, section, section);
@@ -159,5 +159,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
 
 void TreeModel::setupModelData(TreeItem *parent)
 {
+    _rootItem->insertChildren(0, 10);
+
     //parent->insertChildren(parent->childCount(), 10, rootItem->columnCount());
 }
