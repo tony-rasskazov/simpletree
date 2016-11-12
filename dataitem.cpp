@@ -11,7 +11,8 @@ DataItem::DataItem(const QVector<QVariant> &data, const QString &dbTableName, co
     , _dbChildTableName(dbChildTableName)
     , _changed(false)
 {
-    qDebug() << "DataItem::DataItem" << dbTableName << dbChildTableName << "data" << data;
+//    qDebug() << "DataItem::DataItem" << dbTableName << dbChildTableName << "data" << data;
+
     _parentItem = parent;
     _itemData = data;
 
@@ -26,7 +27,8 @@ DataItem::DataItem(const QVector<QVariant> &data, int dbIndex, const QString &db
     , _changed(false)
     , _dbIndex(dbIndex)
 {
-    qDebug() << "DataItem::DataItem" << dbTableName << dbChildTableName << "dbIndex" << dbIndex << "data" << data;
+//    qDebug() << "DataItem::DataItem" << dbTableName << dbChildTableName << "dbIndex" << dbIndex << "data" << data;
+
     _parentItem = parent;
     _itemData = data;
 
@@ -64,7 +66,7 @@ int DataItem::columnCount() const
 
 bool DataItem::insertChildren(int position, int count, const QString &itemTableName, const QString &itemChildsTableName)
 {
-    qDebug() << "DataItem::insertChildren " << itemTableName << itemChildsTableName << _title << "position" <<  position <<  "count" << count;
+//    qDebug() << "DataItem::insertChildren " << itemTableName << itemChildsTableName << _title << "position" <<  position <<  "count" << count;
 
     if (position < 0 || position > _childItems.size())
         return false;
