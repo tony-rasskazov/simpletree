@@ -9,7 +9,10 @@
 class DataItem
 {
 public:
-    explicit DataItem(const QVector<QVariant> &data, DataItem *parent = nullptr);
+    explicit DataItem(const QVector<QVariant> &data, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
+
+    explicit DataItem(const QVector<QVariant> &data, int dbIndex, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
+
     ~DataItem();
 
     DataItem *child(int number);
@@ -19,7 +22,7 @@ public:
 
     DataItem *parent();
 
-    bool insertChildren(int position, int count);
+    bool insertChildren(int position, int count, const QString &itemChildTableName, const QString &itemChildsTableName);
     bool removeChildren(int position, int count);
 
     int childNumber() const;
@@ -29,6 +32,18 @@ public:
 
     int level() const;
     void setLevel(const int &level);
+
+    QString dbChildTableName() const;
+    void setDbChildTableName(const QString &dbChildTableName);
+
+    QString dbTableName() const;
+    void setDbTableName(const QString &dbTableName);
+
+    int dbIndex() const;
+    void setDbIndex(int dbIndex);
+
+    int dbParentIndex() const;
+    void setDbParentIndex(int dbParentIndex);
 
 private:
     int _level;
@@ -43,6 +58,8 @@ private:
 
     int _dbIndex;
     int _dbParentIndex;
+
+    bool _changed;
 };
 
 #endif // DATAITEM_H

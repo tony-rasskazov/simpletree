@@ -10,7 +10,7 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     foreach (QString header, headers)
         rootData << header;
 
-    _rootItem = new DataItem(rootData);
+    _rootItem = new DataItem(rootData, "[none]", "vehicles");
 
     _db.setHostName("localhost");
     _db.setPort(5432);
@@ -96,7 +96,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows);
+    success = parentItem->insertChildren(position, rows, parentItem->dbChildTableName(), "vehicle_models");
     endInsertRows();
 
     return success;
@@ -165,7 +165,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
 
 void TreeModel::setupModelData(DataItem *parent)
 {
-    _rootItem->insertChildren(0, 10);
+    _rootItem->insertChildren(0, 10, _rootItem->dbChildTableName(), "vehicle_models");
 
     //parent->insertChildren(parent->childCount(), 10, rootItem->columnCount());
 }

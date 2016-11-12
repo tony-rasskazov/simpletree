@@ -39,34 +39,25 @@ void MainWindow::insertVehicleModel()
 
     DataItem *i = _model->getItem(index);
 
+    QModelIndex child;
     if (i && i->level() == 0) {
-
         if (!_model->insertRow(0, index))
             return;
 
-        QModelIndex child = _model->index(0, 1, index);
-        _model->setData(child, QVariant("New Model"), Qt::EditRole);
-
-        view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
-
-        updateActions();
-        resizeAllColumnsToContents();
+        child = _model->index(0, 1, index);
     } else if (i && i->level() == 1) {
-
         QModelIndex toVehcleIndex = _model->index(i->parent()->childNumber(), 0);
 
         if (!_model->insertRow(0, toVehcleIndex))
             return;
 
-        QModelIndex child = _model->index(0, 1, toVehcleIndex);
-        _model->setData(child, QVariant("New Model"), Qt::EditRole);
-
-        view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
-
-        updateActions();
-        resizeAllColumnsToContents();
-
+        child = _model->index(0, 1, toVehcleIndex);
     }
+    _model->setData(child, QVariant(tr("[new vehicle model]")), Qt::EditRole);
+    view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
+
+    updateActions();
+    resizeAllColumnsToContents();
 }
 
 void MainWindow::insertVehicle()
@@ -77,7 +68,7 @@ void MainWindow::insertVehicle()
         return;
 
     QModelIndex child = model->index(0, 0);
-    model->setData(child, QVariant("New Vehicle"), Qt::EditRole);
+    model->setData(child, QVariant(tr("[new vehicle]")), Qt::EditRole);
 
     view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
 
