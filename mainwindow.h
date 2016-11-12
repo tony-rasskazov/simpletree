@@ -18,11 +18,10 @@ public slots:
     void updateActions();
 
 private slots:
-    void insertChild();
-    bool insertColumn();
-    void insertRow();
-    bool removeColumn();
-    void removeRow();
+    void insertVehicleModel();
+    void insertVehicle();
+    void removeVehicle();
+    void on_actionApply_changes_triggered();
 };
 
 #endif // MAINWINDOW_H

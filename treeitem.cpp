@@ -4,6 +4,7 @@
 #include <QStringList>
 
 TreeItem::TreeItem(const QVector<QVariant> &data, TreeItem *parent)
+    : _level(parent == nullptr ? 0 : parent->_level + 1)
 {
     parentItem = parent;
     itemData = data;
@@ -106,4 +107,14 @@ bool TreeItem::setData(int column, const QVariant &value)
 
     itemData[column] = value;
     return true;
+}
+
+int TreeItem::level() const
+{
+    return _level;
+}
+
+void TreeItem::setLevel(const uint &level)
+{
+    _level = level;
 }

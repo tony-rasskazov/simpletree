@@ -3,7 +3,7 @@
 #include "treeitem.h"
 #include "treemodel.h"
 
-TreeModel::TreeModel(const QStringList &headers, const QString &data, QObject *parent)
+TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     : QAbstractItemModel(parent)
 {
     QVector<QVariant> rootData;
@@ -42,7 +42,12 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return 0;
 
-    return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+    TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+    if (item && ((item->level() - 1) == index.column() )) {
+        return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+    } else {
+        return QAbstractItemModel::flags(index) ^ Qt::ItemIsSelectable;
+    }
 }
 
 TreeItem *TreeModel::getItem(const QModelIndex &index) const
