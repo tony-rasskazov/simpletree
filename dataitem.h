@@ -22,7 +22,7 @@ public:
 
     DataItem *parent();
 
-    bool insertChildren(int position, int count, const QString &itemChildTableName, const QString &itemChildsTableName);
+    bool insertChild(int position, const QString &title, const QString &itemChildTableName, const QString &itemChildsTableName);
     bool removeChildren(int position, int count);
 
     int childNumber() const;

@@ -64,22 +64,19 @@ int DataItem::columnCount() const
     return _itemData.count();
 }
 
-bool DataItem::insertChildren(int position, int count, const QString &itemTableName, const QString &itemChildsTableName)
+bool DataItem::insertChild(int position, const QString &title, const QString &itemTableName, const QString &itemChildsTableName)
 {
 //    qDebug() << "DataItem::insertChildren " << itemTableName << itemChildsTableName << _title << "position" <<  position <<  "count" << count;
 
     if (position < 0 || position > _childItems.size())
         return false;
 
-    for (int row = 0; row < count; ++row) {
-        QVector<QVariant> data(1);
+    QVector<QVariant> data(1);
 
-        data[0] = QString(QObject::tr("[new vehicle %1]")).arg(row);
+    data[0] = title;
+    DataItem *item = new DataItem(data, itemTableName, itemChildsTableName, this);
 
-        DataItem *item = new DataItem(data, itemTableName, itemChildsTableName, this);
-
-        _childItems.insert(position, item);
-    }
+    _childItems.insert(position, item);
 
     return true;
 }

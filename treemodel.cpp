@@ -108,7 +108,9 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, parentItem->dbChildTableName(), "parentItem->dbChildTableName()");
+    for (int i = 0; i < rows; i++) {
+        success = success & (parentItem->insertChild(position, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_models"));
+    }
     endInsertRows();
 
     return success;
@@ -178,13 +180,12 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
 
 void TreeModel::setupModelData(DataItem *parent)
 {
-    _rootItem->insertChildren(0, 10, "vehicles", "vehicle_models");
 
     QSqlQuery q = _db.exec("select * from vehicles;");
 
     while (q.next()) {
-        qDebug() << "YARRR!!!";
-        q.record();
+        _rootItem->insertChild(0, q.record().value(1).toString(), "vehicles", "vehicle_models");
+        //qDebug() << "YARRR!!!" << ;
     }
 
 
