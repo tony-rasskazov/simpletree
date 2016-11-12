@@ -1,5 +1,7 @@
 #include <QtWidgets>
 
+#include <QDebug>
+
 #include "dataitem.h"
 #include "treemodel.h"
 
@@ -10,13 +12,18 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     foreach (QString header, headers)
         rootData << header;
 
-    _rootItem = new DataItem(rootData, "[none]", "vehicles");
+    _rootItem = new DataItem(rootData, "[root]", "vehicles");
 
+
+    _db = QSqlDatabase::addDatabase("QPSQL");
     _db.setHostName("localhost");
-    _db.setPort(5432);
-    _db.setUserName("postgres");
-
     _db.setDatabaseName("vehicles_db");
+    _db.setUserName("postgres");
+    _db.setPassword("1");
+    _dbOk = _db.open();
+
+    qDebug() << (_dbOk ? "TreeModel::TreeModel db connected" : "TreeModel::TreeModel db NOT connected!");
+
     setupModelData(_rootItem);
 }
 
@@ -96,7 +103,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, parentItem->dbChildTableName(), "vehicle_models");
+    success = parentItem->insertChildren(position, rows, parentItem->dbChildTableName(), "");
     endInsertRows();
 
     return success;
@@ -149,8 +156,7 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
     return result;
 }
 
-bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
-                              const QVariant &value, int role)
+bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
@@ -165,7 +171,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
 
 void TreeModel::setupModelData(DataItem *parent)
 {
-    _rootItem->insertChildren(0, 10, _rootItem->dbChildTableName(), "vehicle_models");
+    _rootItem->insertChildren(0, 10, "vehicles", "vehicle_models");
 
     //parent->insertChildren(parent->childCount(), 10, rootItem->columnCount());
 }

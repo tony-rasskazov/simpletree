@@ -41,6 +41,7 @@ private:
     DataItem *_rootItem;
 
     QSqlDatabase _db;
+    bool _dbOk;
 };
 
 #endif // TREEMODEL_H

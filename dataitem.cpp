@@ -64,7 +64,7 @@ int DataItem::columnCount() const
 
 bool DataItem::insertChildren(int position, int count, const QString &itemTableName, const QString &itemChildsTableName)
 {
-    qDebug() << "DataItem::insertChildren " << itemTableName << _title << "position" <<  position <<  "count" << count;
+    qDebug() << "DataItem::insertChildren " << itemTableName << itemChildsTableName << _title << "position" <<  position <<  "count" << count;
 
     if (position < 0 || position > _childItems.size())
         return false;
