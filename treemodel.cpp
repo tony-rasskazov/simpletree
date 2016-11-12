@@ -1,6 +1,6 @@
 #include <QtWidgets>
 
-#include "treeitem.h"
+#include "dataitem.h"
 #include "treemodel.h"
 
 TreeModel::TreeModel(const QStringList &headers, QObject *parent)
@@ -10,7 +10,13 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     foreach (QString header, headers)
         rootData << header;
 
-    _rootItem = new TreeItem(rootData);
+    _rootItem = new DataItem(rootData);
+
+    _db.setHostName("localhost");
+    _db.setPort(5432);
+    _db.setUserName("postgres");
+
+    _db.setDatabaseName("vehicles_db");
     setupModelData(_rootItem);
 }
 
@@ -32,7 +38,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
-    TreeItem *item = getItem(index);
+    DataItem *item = getItem(index);
 
     return item->data(index.column());
 }
@@ -42,7 +48,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return 0;
 
-    TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+    DataItem *item = static_cast<DataItem*>(index.internalPointer());
     if (item && (item->level() == index.column() )) {
         return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
     } else {
@@ -50,10 +56,10 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     }
 }
 
-TreeItem *TreeModel::getItem(const QModelIndex &index) const
+DataItem *TreeModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+        DataItem *item = static_cast<DataItem*>(index.internalPointer());
         if (item)
             return item;
     }
@@ -74,9 +80,9 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
     if (parent.isValid() && parent.column() != 0)
         return QModelIndex();
 
-    TreeItem *parentItem = getItem(parent);
+    DataItem *parentItem = getItem(parent);
 
-    TreeItem *childItem = parentItem->child(row);
+    DataItem *childItem = parentItem->child(row);
     if (childItem)
         return createIndex(row, column, childItem);
     else
@@ -86,7 +92,7 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
 
 bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
 {
-    TreeItem *parentItem = getItem(parent);
+    DataItem *parentItem = getItem(parent);
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
@@ -101,8 +107,8 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     if (!index.isValid())
         return QModelIndex();
 
-    TreeItem *childItem = getItem(index);
-    TreeItem *parentItem = childItem->parent();
+    DataItem *childItem = getItem(index);
+    DataItem *parentItem = childItem->parent();
 
     if (parentItem == _rootItem)
         return QModelIndex();
@@ -112,7 +118,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
 
 bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent)
 {
-    TreeItem *parentItem = getItem(parent);
+    DataItem *parentItem = getItem(parent);
     bool success = true;
 
     beginRemoveRows(parent, position, position + rows - 1);
@@ -124,7 +130,7 @@ bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent)
 
 int TreeModel::rowCount(const QModelIndex &parent) const
 {
-    TreeItem *parentItem = getItem(parent);
+    DataItem *parentItem = getItem(parent);
 
     return parentItem->childCount();
 }
@@ -134,7 +140,7 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
     if (role != Qt::EditRole)
         return false;
 
-    TreeItem *item = getItem(index);
+    DataItem *item = getItem(index);
     bool result = item->setData(index.column(), value);
 
     if (result)
@@ -157,7 +163,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
-void TreeModel::setupModelData(TreeItem *parent)
+void TreeModel::setupModelData(DataItem *parent)
 {
     _rootItem->insertChildren(0, 10);
 

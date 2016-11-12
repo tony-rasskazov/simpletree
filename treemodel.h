@@ -5,8 +5,9 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include <QSqlDatabase>
 
-class TreeItem;
+class DataItem;
 
 class TreeModel : public QAbstractItemModel
 {
@@ -32,12 +33,14 @@ public:
     bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
 
-    TreeItem *getItem(const QModelIndex &index) const;
+    DataItem *getItem(const QModelIndex &index) const;
 
 private:
-    void setupModelData(TreeItem *parent);
+    void setupModelData(DataItem *parent);
 
-    TreeItem *_rootItem;
+    DataItem *_rootItem;
+
+    QSqlDatabase _db;
 };
 
 #endif // TREEMODEL_H

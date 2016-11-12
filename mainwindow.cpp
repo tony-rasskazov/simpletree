@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 
 #include "treemodel.h"
-#include"treeitem.h"
+#include"dataitem.h"
 
 #include <QFile>
 
@@ -37,7 +37,7 @@ void MainWindow::insertVehicleModel()
 {
     QModelIndex index = view->selectionModel()->currentIndex();
 
-    TreeItem *i = _model->getItem(index);
+    DataItem *i = _model->getItem(index);
 
     if (i && i->level() == 0) {
 

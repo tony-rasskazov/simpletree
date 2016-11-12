@@ -1,23 +1,23 @@
-#ifndef TREEITEM_H
-#define TREEITEM_H
+#ifndef DATAITEM_H
+#define DATAITEM_H
 
 #include <QList>
 #include <QVariant>
 #include <QVector>
 
 //todo: rename to DataItem
-class TreeItem
+class DataItem
 {
 public:
-    explicit TreeItem(const QVector<QVariant> &data, TreeItem *parent = nullptr);
-    ~TreeItem();
+    explicit DataItem(const QVector<QVariant> &data, DataItem *parent = nullptr);
+    ~DataItem();
 
-    TreeItem *child(int number);
+    DataItem *child(int number);
     int childCount() const;
 
     int columnCount() const;
 
-    TreeItem *parent();
+    DataItem *parent();
 
     bool insertChildren(int position, int count);
     bool removeChildren(int position, int count);
@@ -34,9 +34,9 @@ private:
     int _level;
     QString _title;
 
-    QList<TreeItem*> _childItems;
+    QList<DataItem*> _childItems;
     QVector<QVariant> _itemData;
-    TreeItem *_parentItem;
+    DataItem *_parentItem;
 
     QString _dbTableName;
     QString _dbChildTableName;
@@ -45,4 +45,4 @@ private:
     int _dbParentIndex;
 };
 
-#endif // TREEITEM_H
+#endif // DATAITEM_H

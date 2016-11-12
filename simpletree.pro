@@ -2,11 +2,11 @@ QT += widgets sql
 
 FORMS       = mainwindow.ui
 HEADERS     = mainwindow.h \
-              treeitem.h \
-              treemodel.h
+              treemodel.h \
+    dataitem.h
 
 SOURCES     = mainwindow.cpp \
-              treeitem.cpp \
               treemodel.cpp \
-              main.cpp
+              main.cpp \
+    dataitem.cpp
 
