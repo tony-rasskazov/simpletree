@@ -1,6 +1,11 @@
 #include <QtWidgets>
 
+#include <QSqlQuery>
+
 #include <QDebug>
+
+#include <QSqlResult>
+#include <QSqlRecord>
 
 #include "dataitem.h"
 #include "treemodel.h"
@@ -103,7 +108,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, parentItem->dbChildTableName(), "");
+    success = parentItem->insertChildren(position, rows, parentItem->dbChildTableName(), "parentItem->dbChildTableName()");
     endInsertRows();
 
     return success;
@@ -150,8 +155,10 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
     DataItem *item = getItem(index);
     bool result = item->setData(index.column(), value);
 
-    if (result)
+    if (result) {
         emit dataChanged(index, index);
+        emit dataItemChanged(item);
+    }
 
     return result;
 }
@@ -172,6 +179,14 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
 void TreeModel::setupModelData(DataItem *parent)
 {
     _rootItem->insertChildren(0, 10, "vehicles", "vehicle_models");
+
+    QSqlQuery q = _db.exec("select * from vehicles;");
+
+    while (q.next()) {
+        qDebug() << "YARRR!!!";
+        q.record();
+    }
+
 
     //parent->insertChildren(parent->childCount(), 10, rootItem->columnCount());
 }

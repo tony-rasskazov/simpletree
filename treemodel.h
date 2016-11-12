@@ -35,6 +35,9 @@ public:
 
     DataItem *getItem(const QModelIndex &index) const;
 
+signals:
+    void dataItemChanged(DataItem *item);
+
 private:
     void setupModelData(DataItem *parent);
 
