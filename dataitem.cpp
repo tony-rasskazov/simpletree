@@ -18,7 +18,7 @@ DataItem::DataItem(const QVector<QVariant> &data, int id, const QString &dbTable
     _itemData = data;
 
     if (_itemData.size() > 0)
-        _title = _itemData.at(0).toString(  );
+        _title = _itemData.at(0).toString();
 }
 
 
@@ -57,11 +57,17 @@ DataItem* DataItem::insertChild(int position, int id, const QString &title, cons
     if (position < 0 || position > _childItems.size())
         return nullptr;
 
-    QVector<QVariant> data(1);
+    QVector<QVariant> data(2);
 
     data[0] = title;
-    DataItem *item = new DataItem(data, id, itemTableName, itemChildsTableName, this);
+    data[1] = QVariant::fromValue(id);
 
+    return insertChild(new DataItem(data, id, itemTableName, itemChildsTableName, this), position, id);
+}
+
+
+DataItem *DataItem::insertChild(DataItem *item, int position, int id)
+{
     _childItems.insert(position, item);
     _childItemsById.insert(id, item);
 
@@ -84,6 +90,7 @@ bool DataItem::removeChildren(int position, int count)
     return true;
 }
 
+// вынести в статические методы Vehicle и VehicleModel, для поиска в них уже
 DataItem *DataItem::getChildById(int id)
 {
     return _childItemsById.value(id, nullptr);

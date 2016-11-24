@@ -10,6 +10,9 @@
 #include "dataitem.h"
 #include "treemodel.h"
 
+#include "vehicle.h"
+#include "vehiclespec.h"
+
 TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     : QAbstractItemModel(parent)
 {
@@ -41,7 +44,7 @@ TreeModel::~TreeModel()
 
 int TreeModel::columnCount(const QModelIndex & /* parent */) const
 {
-    return _rootItem->columnCount();
+    return 2;//_rootItem->columnCount();
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const
@@ -124,7 +127,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     beginInsertRows(parent, position, position + rows - 1);
     for (int i = 0; i < rows; i++) {
         //todo: refactor it
-        DataItem *newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_models");//!!!
+        DataItem *newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
         emit newDataItem(newItem);
     }
     endInsertRows();
@@ -140,7 +143,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     DataItem *childItem = getItem(index);
     DataItem *parentItem = childItem->parent();
 
-    if (parentItem == _rootItem)
+    if (parentItem == _rootItem || !parentItem)
         return QModelIndex();
 
     return createIndex(parentItem->childNumber(), 0, parentItem);
@@ -196,17 +199,24 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
 
 void TreeModel::setupModelData(DataItem *parent)
 {
-    QSqlQuery vehicles = _db.exec("select * from vehicles;");
-    QSqlQuery models = _db.exec("select * from vehicle_models;");
+    QSqlQuery vehicles_q = _db.exec("select * from vehicles;");
+    QSqlQuery species_q = _db.exec("select * from vehicle_species;");
 
-    while (vehicles.next()) {
-        DataItem *i = _rootItem->insertChild(0, vehicles.record().value(0).toInt(), vehicles.record().value(1).toString(), "vehicles", "vehicle_models");
+    while (vehicles_q.next()) {
+        DataItem *i = _rootItem->insertChild(
+                    new Vehicle(vehicles_q.record().value(1).toString(), vehicles_q.record().value(0).toInt(), _rootItem)
+                    );
 
 //        emit newDataItem(i);
     }
 
-    while (models.next()) {
-        DataItem *i = _rootItem->getChildById(models.record().value(2).toInt())->insertChild(0, models.record().value(0).toInt(), models.record().value(1).toString(), "vehicles", "vehicle_models");
+
+    while (species_q.next()) {
+        Vehicle *v = Vehicle::findVehicleById(species_q.record().value(2).toInt());
+        if (v)
+            DataItem *i = v->insertChild(
+                        new  VehicleSpec(species_q.record().value(1).toString(), species_q.record().value(2).toInt())
+                        );
 
 //        emit newDataItem(i);
     }

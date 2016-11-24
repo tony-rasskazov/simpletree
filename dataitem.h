@@ -5,7 +5,6 @@
 #include <QVariant>
 #include <QVector>
 
-//todo: rename to DataItem
 class DataItem
 {
 public:
@@ -22,6 +21,7 @@ public:
 
     DataItem *parent();
 
+    DataItem* insertChild(DataItem* child, int position = 0, int id = -1);
     DataItem* insertChild(int position, int id, const QString &title, const QString &itemChildTableName, const QString &itemChildsTableName);
     bool removeChildren(int position, int count);
 
