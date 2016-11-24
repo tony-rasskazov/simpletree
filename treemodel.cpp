@@ -86,7 +86,7 @@ DataItem *TreeModel::getItem(const QModelIndex &index) const
 void TreeModel::onDataItemChanged(DataItem *item)
 {
     qDebug() << "TreeModel::dataItemChanged" << item->toString();
-
+    qDebug() << QString("UPDATE %1 set %4 = '%2' WHERE id = %3;").arg(item->dbTableName()).arg(item->title()).arg(item->id()).arg(item->dbTableField()) ;
 }
 
 void TreeModel::onNewDataItem(DataItem *item)
@@ -204,20 +204,23 @@ void TreeModel::setupModelData(DataItem *parent)
 
     while (vehicles_q.next()) {
         DataItem *i = _rootItem->insertChild(
+
                     new Vehicle(vehicles_q.record().value(1).toString(), vehicles_q.record().value(0).toInt(), _rootItem)
                     );
-
 //        emit newDataItem(i);
     }
 
 
     while (species_q.next()) {
         Vehicle *v = Vehicle::findVehicleById(species_q.record().value(2).toInt());
-        if (v)
-            DataItem *i = v->insertChild(
-                        new  VehicleSpec(species_q.record().value(1).toString(), species_q.record().value(2).toInt())
-                        );
 
+        int v_id = species_q.record().value(2).toInt();
+        QString v_title = species_q.record().value(1).toString();
+
+        DataItem *i = (v != nullptr) ? v->insertChild(
+                                           new VehicleSpec(v_title, v_id)
+                                       )
+                                     : nullptr;
 //        emit newDataItem(i);
     }
 

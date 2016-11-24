@@ -9,7 +9,9 @@ class VehicleSpec : public DataItem
 {
 public:
     explicit VehicleSpec(const QString title, int parentId);
-    explicit VehicleSpec(const QString title, const Vehicle *vehicle, DataItem *parent = nullptr);
+
+    QString dbTableField() const override { return QString("model"); }
+
 };
 
 #endif // VEHICLESPEC_H

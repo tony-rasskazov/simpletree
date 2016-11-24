@@ -10,13 +10,17 @@ class Vehicle : public DataItem
 public:
     explicit Vehicle(const QString _title, int id, DataItem *parent);
 
+    /*
     int id() const;
     void setId(int id);
+    */
 
     static Vehicle *findVehicleById(int id);
 
+    QString dbTableField() const override { return QString("vehicle"); }
+
+
 private:
-    int _id;
     static QHash<int, Vehicle*> s_byId;
 };
 

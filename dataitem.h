@@ -47,11 +47,17 @@ public:
     int dbParentIndex() const;
     void setDbParentIndex(int dbParentIndex);
 
+    int id() const;
+
     QString title() const;
     void setTitle(const QString &title);
 
-
     QString toString() const;
+
+    virtual QString dbTableField() const { return QString("[undef]"); }
+
+protected:
+    int _id;
 
 private:
     int _level;
@@ -66,7 +72,6 @@ private:
     QString _dbTableName;
     QString _dbChildTableName;
 
-    int _id;
     int _dbParentIndex;
 
     bool _changed;

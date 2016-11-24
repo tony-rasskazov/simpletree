@@ -3,13 +3,13 @@
 QHash<int, Vehicle*> Vehicle::s_byId = QHash<int, Vehicle*>();
 
 Vehicle::Vehicle(const QString _title, int id, DataItem *parent)
-    : DataItem(QVector<QVariant>({_title, id}), 0, "vehicles", "vehicle_species", parent)
-    , _id(id)
+    : DataItem(QVector<QVariant>({_title, id}), id, "vehicles", "vehicle_species", parent)
 {
 
     s_byId[_id] = this;
 }
 
+/*
 int Vehicle::id() const
 {
     return _id;
@@ -21,6 +21,7 @@ void Vehicle::setId(int id)
     _id = id;
     s_byId[_id] = this;
 }
+*/
 
 Vehicle *Vehicle::findVehicleById(int id)
 {
