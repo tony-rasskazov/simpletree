@@ -18,7 +18,7 @@ DataItem::DataItem(const QVector<QVariant> &data, int id, const QString &dbTable
     _itemData = data;
 
     if (_itemData.size() > 0)
-        _title = _itemData.at(0).toString();
+        _title = _itemData.at(0).toString(  );
 }
 
 

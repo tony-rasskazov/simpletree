@@ -31,7 +31,6 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     connect(this, &TreeModel::dataItemChanged, this, &TreeModel::onDataItemChanged);
     connect(this, &TreeModel::newDataItem, this, &TreeModel::onNewDataItem);
 
-
     setupModelData(_rootItem);
 }
 
@@ -124,7 +123,8 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
 
     beginInsertRows(parent, position, position + rows - 1);
     for (int i = 0; i < rows; i++) {
-        DataItem *newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_models");
+        //todo: refactor it
+        DataItem *newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_models");//!!!
         emit newDataItem(newItem);
     }
     endInsertRows();
@@ -202,13 +202,13 @@ void TreeModel::setupModelData(DataItem *parent)
     while (vehicles.next()) {
         DataItem *i = _rootItem->insertChild(0, vehicles.record().value(0).toInt(), vehicles.record().value(1).toString(), "vehicles", "vehicle_models");
 
-        emit newDataItem(i);
+//        emit newDataItem(i);
     }
 
     while (models.next()) {
         DataItem *i = _rootItem->getChildById(models.record().value(2).toInt())->insertChild(0, models.record().value(0).toInt(), models.record().value(1).toString(), "vehicles", "vehicle_models");
 
-        emit newDataItem(i);
+//        emit newDataItem(i);
     }
 
 }
