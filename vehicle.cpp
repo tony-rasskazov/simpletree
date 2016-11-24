@@ -9,6 +9,12 @@ Vehicle::Vehicle(const QString _title, int id, DataItem *parent)
     s_byId[_id] = this;
 }
 
+Vehicle::Vehicle(const QString _title, DataItem *parent)
+    : DataItem(QVector<QVariant>({_title, -1}), -1, "vehicles", "vehicle_species", parent)
+{
+
+}
+
 /*
 int Vehicle::id() const
 {

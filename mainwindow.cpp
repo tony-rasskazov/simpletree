@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(insertVehicleAction, &QAction::triggered, this, &MainWindow::insertVehicle);
     connect(removeVehicleAction, &QAction::triggered, this, &MainWindow::removeVehicle);
-    connect(addVehicleModelAction, &QAction::triggered, this, &MainWindow::insertVehicleModel);
+    connect(addVehicleModelAction, &QAction::triggered, this, &MainWindow::insertVehicleSpec);
 
     updateActions();
     resizeAllColumnsToContents();
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     view->selectionModel()->select(_model->index(0, 0), QItemSelectionModel::ClearAndSelect);
 }
 
-void MainWindow::insertVehicleModel()
+void MainWindow::insertVehicleSpec()
 {
     QModelIndex index = view->selectionModel()->currentIndex();
 
@@ -122,5 +122,5 @@ void MainWindow::on_toolButton_newVehicle_clicked()
 
 void MainWindow::on_toolButton_newVehicleModel_clicked()
 {
-    insertVehicleModel();
+    insertVehicleSpec();
 }

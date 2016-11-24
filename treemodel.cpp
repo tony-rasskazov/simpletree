@@ -92,6 +92,8 @@ void TreeModel::onDataItemChanged(DataItem *item)
 void TreeModel::onNewDataItem(DataItem *item)
 {
     qDebug() << "TreeModel::onNewDataItem" << item->toString();
+    qDebug() << item->insertSql();
+
 
 }
 
@@ -126,9 +128,31 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
 
     beginInsertRows(parent, position, position + rows - 1);
     for (int i = 0; i < rows; i++) {
+
+
+        //DataItem *selectedItem =
         //todo: refactor it
-        DataItem *newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
-        emit newDataItem(newItem);
+
+        //selectionModel()->
+
+        qDebug() << parentItem->level() << parentItem->toString();//->insertSql();
+
+        DataItem *newItem = nullptr;
+
+//        newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
+
+        if (parentItem->level() == -1) {
+            newItem = parentItem->insertChild(new Vehicle(QString("[new %1]").arg(i), -1, _rootItem));//!!!
+//            newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
+        } else if (parentItem->level() == 0) {
+            newItem = parentItem->insertChild(new VehicleSpec(QString("[new spec %1]").arg(i), parentItem->id()));//!!!
+            //newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
+
+        }
+
+
+        if (newItem) emit newDataItem(newItem);
+
     }
     endInsertRows();
 

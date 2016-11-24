@@ -56,6 +56,8 @@ public:
 
     virtual QString dbTableField() const { return QString("[undef]"); }
 
+    virtual QString insertSql() const { return "nosql;"; }
+
 protected:
     int _id;
 

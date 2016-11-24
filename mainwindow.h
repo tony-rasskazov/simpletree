@@ -20,7 +20,7 @@ public slots:
     void updateActions();
 
 private slots:
-    void insertVehicleModel();
+    void insertVehicleSpec();
     void insertVehicle();
     void removeVehicle();
     void on_actionApply_changes_triggered();
