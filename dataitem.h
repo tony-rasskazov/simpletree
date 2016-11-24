@@ -5,6 +5,8 @@
 #include <QVariant>
 #include <QVector>
 
+#include <QSqlQuery>
+
 class DataItem
 {
 public:
@@ -56,7 +58,7 @@ public:
 
     virtual QString dbTableField() const { return QString("[undef]"); }
 
-    virtual QString insertSql() const { return "nosql;"; }
+    virtual QSqlQuery prepareInsertSqlQuery() const { return QSqlQuery(); }
 
 protected:
     int _id;

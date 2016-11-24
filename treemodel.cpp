@@ -91,10 +91,10 @@ void TreeModel::onDataItemChanged(DataItem *item)
 
 void TreeModel::onNewDataItem(DataItem *item)
 {
-    qDebug() << "TreeModel::onNewDataItem" << item->toString();
-    qDebug() << item->insertSql();
+    QSqlQuery q = item->prepareInsertSqlQuery();
+    q.exec();
 
-
+    qDebug() << "q.lastQuery();" << q.lastQuery() << q.isValid();
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
@@ -225,6 +225,7 @@ void TreeModel::setupModelData(DataItem *parent)
 {
     QSqlQuery vehicles_q = _db.exec("select * from vehicles;");
     QSqlQuery species_q = _db.exec("select * from vehicle_species;");
+
 
     while (vehicles_q.next()) {
         DataItem *i = _rootItem->insertChild(

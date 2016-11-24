@@ -18,9 +18,24 @@ public:
 
     static Vehicle *findVehicleById(int id);
 
-    QString dbTableField() const override { return QString("vehicle"); }
+    QString dbTableField() const override { return QString("title"); }
 
-    QString insertSql() const override { return QString("INSERT INTO %1 (%2) VALUES (%3)").arg(dbTableName()).arg(dbTableField()).arg(title()) ; }
+    QSqlQuery prepareInsertSqlQuery() const override {
+        QSqlQuery q;
+
+        q.prepare(QString("INSERT INTO %1 (%2) VALUES (?)").arg(dbTableName()).arg(dbTableField()) );
+        q.bindValue(0, title());
+
+        return q;
+
+
+        //q.prepare(QString("INSERT INTO %1(%2) VALUES(?)").arg(item->dbTableName()).arg(item->dbTableField()));
+        //q.bindValue(0, item->title());
+
+        //q.prepare(QString("INSERT INTO %1 (%2) VALUES (:val)").arg(dbTableName()).arg(dbTableField()) );
+        //q.bindValue(":val", title());
+
+    }
 
 private:
     static QHash<int, Vehicle*> s_byId;
