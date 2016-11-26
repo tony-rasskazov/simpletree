@@ -23,7 +23,7 @@ public:
     QSqlQuery prepareInsertSqlQuery() const override {
         QSqlQuery q;
 
-        q.prepare(QString("INSERT INTO %1 (%2) VALUES (?)").arg(dbTableName()).arg(dbTableField()) );
+        q.prepare(QString("INSERT INTO %1 (%2) VALUES (?) RETURNING id").arg(dbTableName()).arg(dbTableField()) );
         q.bindValue(0, title());
 
         return q;

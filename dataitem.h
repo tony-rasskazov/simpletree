@@ -50,6 +50,7 @@ public:
     void setDbParentIndex(int dbParentIndex);
 
     int id() const;
+    void setId(int id);
 
     QString title() const;
     void setTitle(const QString &title);
@@ -59,6 +60,7 @@ public:
     virtual QString dbTableField() const { return QString("[undef]"); }
 
     virtual QSqlQuery prepareInsertSqlQuery() const { return QSqlQuery(); }
+
 
 protected:
     int _id;

@@ -19,8 +19,6 @@ DataItem::DataItem(const QVector<QVariant> &data, int id, const QString &dbTable
 
     if (_itemData.size() > 0)
         _title = _itemData.at(0).toString();
-
-
 }
 
 
@@ -187,4 +185,9 @@ void DataItem::setTitle(const QString &title)
 QString DataItem::toString() const
 {
     return QString("(%1,%2,%3,%4)").arg(_id).arg(_title).arg(_dbTableName).arg(_dbChildTableName);
+}
+
+void DataItem::setId(int id)
+{
+    _id = id;
 }

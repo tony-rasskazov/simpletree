@@ -94,7 +94,7 @@ void TreeModel::onNewDataItem(DataItem *item)
     QSqlQuery q = item->prepareInsertSqlQuery();
     q.exec();
 
-    qDebug() << "q.lastQuery();" << q.lastQuery() << q.isValid();
+    item->setId(q.lastInsertId().toInt());
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
