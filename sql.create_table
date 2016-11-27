@@ -1,0 +1,13 @@
+CREATE TABLE public.vehicles
+(
+    id serial NOT NULL,
+    title text,
+    PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.vehicles
+    OWNER to postgres;
