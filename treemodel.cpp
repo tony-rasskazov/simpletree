@@ -44,7 +44,7 @@ TreeModel::~TreeModel()
 
 int TreeModel::columnCount(const QModelIndex & /* parent */) const
 {
-    return _rootItem->columnCount();
+    return 2;//_rootItem->columnCount();
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const
@@ -99,7 +99,7 @@ void TreeModel::onDataItemChanged(DataItem *item)
 
 void TreeModel::onNewDataItem(DataItem *item)
 {
-    QSqlQuery q = item->prepareInsertSqlQuery();
+    QSqlQuery q = item->prepareInsertSqlQuery();//todo soe sql helper... here
     q.exec();
 
     item->setId(q.lastInsertId().toInt());

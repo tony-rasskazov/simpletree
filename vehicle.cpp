@@ -5,7 +5,6 @@ QHash<int, Vehicle*> Vehicle::s_byId = QHash<int, Vehicle*>();
 Vehicle::Vehicle(const QString _title, int id, DataItem *parent)
     : DataItem(QVector<QVariant>({_title, id}), id, "vehicles", "vehicle_species", parent)
 {
-
     s_byId[_id] = this;
 }
 
@@ -15,21 +14,16 @@ Vehicle::Vehicle(const QString _title, DataItem *parent)
 
 }
 
-/*
-int Vehicle::id() const
-{
-    return _id;
-}
-
-void Vehicle::setId(int id)
-{
-    s_byId[_id] = nullptr;
-    _id = id;
-    s_byId[_id] = this;
-}
-*/
-
 Vehicle *Vehicle::findVehicleById(int id)
 {
     return s_byId.value(id, nullptr);
+}
+
+QSqlQuery Vehicle::prepareInsertSqlQuery() const {
+    QSqlQuery q;
+
+    q.prepare(QString("INSERT INTO %1 (%2) VALUES (?) RETURNING id").arg(dbTableName()).arg(dbTableField()) );
+    q.bindValue(0, title());
+
+    return q;
 }

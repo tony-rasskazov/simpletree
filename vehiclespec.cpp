@@ -12,3 +12,14 @@ VehicleSpec::VehicleSpec(int id, const QString title, int parentId)
 {
 
 }
+
+QSqlQuery VehicleSpec::prepareInsertSqlQuery() const
+{
+
+    QSqlQuery q;
+    q.prepare(QString("INSERT INTO %1 (%2, v_id) VALUES (:title, :parent_id)").arg(dbTableName()).arg(dbTableField()));//.arg(title()).arg(_parentId) ;
+    q.bindValue(":title", title());
+    q.bindValue(":parent_id", _parentId);
+
+    return q;
+}
