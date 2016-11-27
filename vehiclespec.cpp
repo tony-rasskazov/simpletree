@@ -7,7 +7,7 @@
 #include "vehicle.h"
 
 VehicleSpec::VehicleSpec(int id, const QString title, int parentId)
-    : DataItem(QVector<QVariant>({title, parentId}), id, "vehicle_species", "", Vehicle::findVehicleById(parentId))
+    : DataItem(title, id, "vehicle_species", "", Vehicle::findVehicleById(parentId))
     , _parentId(parentId)
 {
 

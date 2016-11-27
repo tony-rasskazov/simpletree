@@ -16,11 +16,8 @@
 TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     : QAbstractItemModel(parent)
 {
-    QVector<QVariant> rootData;
-    foreach (QString header, headers)
-        rootData << header;
 
-    _rootItem = new DataItem(rootData, -1, "[root]", "vehicles");
+    _rootItem = new DataItem("[root]", -1, "[root]", "[vehicles]");
 
     _db = QSqlDatabase::addDatabase("QPSQL");
     _db.setHostName("localhost");

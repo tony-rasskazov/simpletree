@@ -5,22 +5,17 @@
 
 #include <QDebug>
 
-DataItem::DataItem(const QVector<QVariant> &data, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent)
+DataItem::DataItem(const QString &title, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent)
     : _level(parent == nullptr ? -1 : parent->_level + 1)
     , _dbTableName(dbTableName)
     , _dbChildTableName(dbChildTableName)
     , _changed(false)
     , _id(id)
+    , _title(title)
+    , _parentItem(parent)
 {
-//    qDebug() << "DataItem::DataItem" << dbTableName << dbChildTableName << "data" << data;
 
-    _parentItem = parent;
-    _itemData = data;
-
-    if (_itemData.size() > 0)
-        _title = _itemData.at(0).toString();
 }
-
 
 DataItem::~DataItem()
 {
@@ -43,26 +38,6 @@ int DataItem::childNumber() const
         return _parentItem->_childItems.indexOf(const_cast<DataItem*>(this));
 
     return 0;
-}
-
-int DataItem::columnCount() const
-{
-    return _itemData.count();
-}
-
-DataItem* DataItem::insertChild(int position, int id, const QString &title, const QString &itemTableName, const QString &itemChildsTableName)
-{
-//    qDebug() << "DataItem::insertChildren " << itemTableName << itemChildsTableName << _title << "position" <<  position <<  "count" << count;
-
-    if (position < 0 || position > _childItems.size())
-        return nullptr;
-
-    QVector<QVariant> data(2);
-
-    data[0] = title;
-    data[1] = QVariant::fromValue(id);
-
-    return insertChild(new DataItem(data, id, itemTableName, itemChildsTableName, this), position, id);
 }
 
 
@@ -99,7 +74,9 @@ DataItem *DataItem::getChildById(int id)
 QVariant DataItem::data(int column) const
 {
     if (_level == -1) {
-        return _itemData.value(column);
+        ;
+
+        return QList<QString>({"vehicle", "model"}).at(column);
     } else
         return column == _level ? _title : QVariant();
 }

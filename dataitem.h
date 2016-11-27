@@ -10,7 +10,7 @@
 class DataItem
 {
 public:
-    explicit DataItem(const QVector<QVariant> &data, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
+    explicit DataItem(const QString &title, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
 
     //explicit DataItem(const QVector<QVariant> &data, int dbIndex, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
 
@@ -19,12 +19,9 @@ public:
     DataItem *child(int number);
     int childCount() const;
 
-    int columnCount() const;
-
     DataItem *parent();
 
     DataItem* insertChild(DataItem* child, int position = 0, int id = -1);
-    DataItem* insertChild(int position, int id, const QString &title, const QString &itemChildTableName, const QString &itemChildsTableName);
     bool removeChildren(int position, int count);
 
     DataItem *getChildById(int id);
@@ -72,7 +69,6 @@ private:
     QList<DataItem*> _childItems;
     QHash<int, DataItem*> _childItemsById;
 
-    QVector<QVariant> _itemData;
     DataItem *_parentItem;
 
     QString _dbTableName;
