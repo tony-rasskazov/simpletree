@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-#include "treemodel.h"
+#include "datamodel.h"
 #include"dataitem.h"
 
 #include <QFile>
@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     QStringList headers;
     headers << tr("Vehicle") << tr("Model") << tr("Id");
 
-    _model = new TreeModel(headers);
+    _model = new DataModel(headers);
 
     view->setModel(_model);
 

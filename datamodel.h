@@ -1,6 +1,6 @@
 
-#ifndef TREEMODEL_H
-#define TREEMODEL_H
+#ifndef DATAMODEL_H
+#define DATAMODEL_H
 
 #include <QVariant>
 #include <QHash>
@@ -10,16 +10,15 @@
 #include <QAbstractItemModel>
 #include <QSqlDatabase>
 
-
 class DataItem;
 
-class TreeModel : public QAbstractItemModel
+class DataModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    TreeModel(const QStringList &headers, QObject *parent = 0);
-    ~TreeModel();
+    DataModel(const QStringList &headers, QObject *parent = 0);
+    ~DataModel();
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
@@ -56,4 +55,4 @@ private:
     bool _dbOk;
 };
 
-#endif // TREEMODEL_H
+#endif // DATAMODEL_H

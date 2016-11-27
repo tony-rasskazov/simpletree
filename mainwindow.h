@@ -7,7 +7,7 @@
 #include <QMainWindow>
 #include <QModelIndex>
 
-class TreeModel;
+class DataModel;
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
@@ -31,7 +31,7 @@ private slots:
     void on_toolButton_newVehicleModel_clicked();
 
 private:
-    TreeModel *_model;
+    DataModel *_model;
 };
 
 #endif // MAINWINDOW_H

@@ -57,8 +57,8 @@ public:
     virtual QString dbTableField() const { return QString("[undef]"); }
 
     virtual QSqlQuery prepareInsertSqlQuery() const { return QSqlQuery(); }
-
     QSqlQuery prepareDeleteSqlQuery() const;
+    QSqlQuery prepareUpdateSqlQuery() const;
 
 
 protected:

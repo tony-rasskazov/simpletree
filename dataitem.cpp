@@ -71,7 +71,6 @@ bool DataItem::removeChildren(int position, int count)
     return true;
 }
 
-// вынести в статические методы Vehicle и VehicleModel, для поиска в них уже
 DataItem *DataItem::getChildById(int id)
 {
     return _childItemsById.value(id, nullptr);
@@ -81,20 +80,16 @@ QVariant DataItem::data(int column) const
 {
     if (_level == -1) {
         return QList<QString>({"vehicle", "model"}).at(column);
-    } else
-        return column == _level ? _title : QVariant();
+    } else {
+
+        return column == 0 ? _title : QVariant();
+    }
 }
 
 bool DataItem::setData(int column, const QVariant &value)
 {
-//    qDebug() << "DataItem::setData " << dbTableName() << "value" << value;
-
-   // if (column < 0 || (column != _level))
-    //    return false;
-
     _title = value.toString();
     _changed = true;
-
     return true;
 }
 
@@ -172,6 +167,14 @@ QSqlQuery DataItem::prepareDeleteSqlQuery() const
 {
     QSqlQuery q;
     q.prepare(QString("DELETE FROM %1 WHERE id=%2").arg(dbTableName()).arg(id()) );
+    return q;
+}
+
+QSqlQuery DataItem::prepareUpdateSqlQuery() const
+{
+    QSqlQuery q;
+    q.prepare(QString("UPDATE %1 set %3 = (:val) WHERE id = %2;").arg(dbTableName()).arg(id()).arg(dbTableField()) );
+    q.bindValue(":val", title());
     return q;
 }
 

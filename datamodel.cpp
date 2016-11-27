@@ -8,12 +8,12 @@
 #include <QSqlRecord>
 
 #include "dataitem.h"
-#include "treemodel.h"
+#include "datamodel.h"
 
 #include "vehicle.h"
 #include "vehiclespec.h"
 
-TreeModel::TreeModel(const QStringList &headers, QObject *parent)
+DataModel::DataModel(const QStringList &headers, QObject *parent)
     : QAbstractItemModel(parent)
 {
 
@@ -28,23 +28,23 @@ TreeModel::TreeModel(const QStringList &headers, QObject *parent)
 
     qDebug() << (_dbOk ? "TreeModel::TreeModel db connected" : "TreeModel::TreeModel db NOT connected!");
 
-    connect(this, &TreeModel::dataItemChanged, this, &TreeModel::onDataItemChanged);
-    connect(this, &TreeModel::newDataItem, this, &TreeModel::onNewDataItem);
+    connect(this, &DataModel::dataItemChanged, this, &DataModel::onDataItemChanged);
+    connect(this, &DataModel::newDataItem, this, &DataModel::onNewDataItem);
 
     setupModelData(_rootItem);
 }
 
-TreeModel::~TreeModel()
+DataModel::~DataModel()
 {
     delete _rootItem;
 }
 
-int TreeModel::columnCount(const QModelIndex & /* parent */) const
+int DataModel::columnCount(const QModelIndex & /* parent */) const
 {
-    return 2;//_rootItem->columnCount();
+    return 1;//_rootItem->columnCount();
 }
 
-QVariant TreeModel::data(const QModelIndex &index, int role) const
+QVariant DataModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -57,20 +57,21 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     return item->data(index.column());
 }
 
-Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
+Qt::ItemFlags DataModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return 0;
 
     DataItem *item = static_cast<DataItem*>(index.internalPointer());
-    if (item && (item->level() == index.column() )) {
-        return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
-    } else {
-        return QAbstractItemModel::flags(index) ^ Qt::ItemIsSelectable;
+    if (item) {
+        if (index.column() == 0)
+            return Qt::ItemIsSelectable | Qt::ItemIsEditable | QAbstractItemModel::flags(index) ;
+        else
+            return Qt::ItemIsSelectable | QAbstractItemModel::flags(index) ;
     }
 }
 
-DataItem *TreeModel::getItem(const QModelIndex &index) const
+DataItem *DataModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
         DataItem *item = static_cast<DataItem*>(index.internalPointer());
@@ -80,29 +81,21 @@ DataItem *TreeModel::getItem(const QModelIndex &index) const
     return _rootItem;
 }
 
-void TreeModel::onDataItemChanged(DataItem *item)
+void DataModel::onDataItemChanged(DataItem *item)
 {
-    qDebug() << "TreeModel::dataItemChanged" << item->toString();
-    qDebug() << QString("UPDATE %1 set %3 = (:val) WHERE id = %2;").arg(item->dbTableName()).arg(item->id()).arg(item->dbTableField())  << ":val" << item->title() ;
-
-    QSqlQuery q;
-
-    q.prepare(QString("UPDATE %1 set %3 = (:val) WHERE id = %2;").arg(item->dbTableName()).arg(item->id()).arg(item->dbTableField()) );
-    q.bindValue(":val", item->title());
-
+    QSqlQuery q = item->prepareUpdateSqlQuery();
     q.exec();
-
 }
 
-void TreeModel::onNewDataItem(DataItem *item)
+void DataModel::onNewDataItem(DataItem *item)
 {
-    QSqlQuery q = item->prepareInsertSqlQuery();//todo soe sql helper... here
+    QSqlQuery q = item->prepareInsertSqlQuery();
     q.exec();
 
     item->setId(q.lastInsertId().toInt());
 }
 
-QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
+QVariant DataModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -111,7 +104,7 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex DataModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (parent.isValid() && parent.column() != 0)
         return QModelIndex();
@@ -126,7 +119,7 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
 }
 
 
-bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
+bool DataModel::insertRows(int position, int rows, const QModelIndex &parent)
 {
     DataItem *parentItem = getItem(parent);
     bool success = true;
@@ -146,7 +139,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     return success;
 }
 
-QModelIndex TreeModel::parent(const QModelIndex &index) const
+QModelIndex DataModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid())
         return QModelIndex();
@@ -160,7 +153,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     return createIndex(parentItem->childNumber(), 0, parentItem);
 }
 
-bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent)
+bool DataModel::removeRows(int position, int rows, const QModelIndex &parent)
 {
     DataItem *parentItem = getItem(parent);
     bool success = true;
@@ -172,14 +165,14 @@ bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent)
     return success;
 }
 
-int TreeModel::rowCount(const QModelIndex &parent) const
+int DataModel::rowCount(const QModelIndex &parent) const
 {
     DataItem *parentItem = getItem(parent);
 
     return parentItem->childCount();
 }
 
-bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool DataModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role != Qt::EditRole)
         return false;
@@ -195,7 +188,7 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
     return result;
 }
 
-bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
+bool DataModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
@@ -208,7 +201,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
     return result;
 }
 
-void TreeModel::setupModelData(DataItem *parent)
+void DataModel::setupModelData(DataItem *parent)
 {
     QSqlQuery vehicles_q = _db.exec("select * from vehicles;");
     QSqlQuery species_q = _db.exec("select * from vehicle_species;");
