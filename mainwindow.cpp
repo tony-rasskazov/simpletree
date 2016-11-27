@@ -37,6 +37,10 @@ void MainWindow::insertVehicleSpec()
 {
     QModelIndex index = view->selectionModel()->currentIndex();
 
+    if (!index.isValid()) {
+        return;
+    }
+
     DataItem *i = _model->getItem(index);
 
     QModelIndex child;
@@ -44,18 +48,17 @@ void MainWindow::insertVehicleSpec()
         if (!_model->insertRow(0, index))
             return;
 
-        child = _model->index(0, 1, index);
+        child = _model->index(0, 0, index);
     } else if (i && i->level() == 1) {
-        QModelIndex toVehcleIndex = _model->index(i->parent()->childNumber(), 0);
-
-        if (!_model->insertRow(0, toVehcleIndex))
+        if (!_model->insertRow(0, index.parent()))
             return;
 
-        child = _model->index(0, 1, toVehcleIndex);
+        child = _model->index(0, 0, index.parent());
     }
-    _model->setData(child, QVariant(tr("[new vehicle model]")), Qt::EditRole);
-    view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
-
+     if (child.isValid())
+       _model->setData(child, QVariant(tr("[new vehicle model]")), Qt::EditRole);
+     view->selectionModel()->setCurrentIndex(child, QItemSelectionModel::ClearAndSelect);
+//    }
     updateActions();
     resizeAllColumnsToContents();
 }

@@ -13,13 +13,12 @@ DataItem::DataItem(const QString &title, int id, const QString &dbTableName, con
     , _id(id)
     , _title(title)
     , _parentItem(parent)
+    , _dbParentIndex(-1)
 {
-
 }
 
 DataItem::~DataItem()
 {
-    qDebug() << "DataItem::~DataItem";
     qDeleteAll(_childItems);
 }
 
@@ -64,7 +63,6 @@ bool DataItem::removeChildren(int position, int count)
         auto c = _childItems.takeAt(position);
         QSqlQuery q = c->prepareDeleteSqlQuery();
         q.exec();
-        //c->
         delete c;
     }
 
@@ -79,10 +77,10 @@ DataItem *DataItem::getChildById(int id)
 QVariant DataItem::data(int column) const
 {
     if (_level == -1) {
-        return QList<QString>({"vehicle", "model"}).at(column);
+        return QList<QString>({"title", "id"}).at(column);
     } else {
 
-        return column == 0 ? _title : QVariant();
+        return column == 0 ? _title : column == 1 ? _id : QVariant();
     }
 }
 
@@ -180,5 +178,6 @@ QSqlQuery DataItem::prepareUpdateSqlQuery() const
 
 void DataItem::setId(int id)
 {
+    qDebug() << "DataItem::setId" << id;
     _id = id;
 }

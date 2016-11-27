@@ -41,7 +41,7 @@ DataModel::~DataModel()
 
 int DataModel::columnCount(const QModelIndex & /* parent */) const
 {
-    return 1;//_rootItem->columnCount();
+    return 2;//_rootItem->columnCount();
 }
 
 QVariant DataModel::data(const QModelIndex &index, int role) const
@@ -69,6 +69,7 @@ Qt::ItemFlags DataModel::flags(const QModelIndex &index) const
         else
             return Qt::ItemIsSelectable | QAbstractItemModel::flags(index) ;
     }
+    return QAbstractItemModel::flags(index);
 }
 
 DataItem *DataModel::getItem(const QModelIndex &index) const
@@ -95,8 +96,7 @@ void DataModel::onNewDataItem(DataItem *item)
     item->setId(q.lastInsertId().toInt());
 }
 
-QVariant DataModel::headerData(int section, Qt::Orientation orientation,
-                               int role) const
+QVariant DataModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return _rootItem->data(section);
@@ -122,17 +122,22 @@ QModelIndex DataModel::index(int row, int column, const QModelIndex &parent) con
 bool DataModel::insertRows(int position, int rows, const QModelIndex &parent)
 {
     DataItem *parentItem = getItem(parent);
-    bool success = true;
+    bool success = false;
 
     beginInsertRows(parent, position, position + rows - 1);
     for (int i = 0; i < rows; i++) {
         DataItem *newItem = nullptr;
+
         if (parentItem->level() == -1) {
-            newItem = parentItem->insertChild(new Vehicle(QString("[new %1]").arg(i), -1, _rootItem));//!!!
+            newItem = _rootItem->insertChild(new Vehicle(QString("[new %1!]").arg(i), -1, _rootItem));//!!!
         } else if (parentItem->level() == 0) {
             newItem = parentItem->insertChild(new VehicleSpec(-1, QString("[new spec %1]").arg(i), parentItem->id()));//!!!
         }
-        if (newItem) emit newDataItem(newItem);
+
+        if (newItem) {
+            success = true;
+            emit newDataItem(newItem);
+        }
     }
     endInsertRows();
 
