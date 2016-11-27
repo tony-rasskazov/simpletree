@@ -132,7 +132,7 @@
     <string>Remove Vehicle</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+D</string>
+    <string>Del</string>
    </property>
   </action>
   <action name="addVehicleModelAction">
