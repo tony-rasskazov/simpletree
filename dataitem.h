@@ -11,9 +11,6 @@ class DataItem
 {
 public:
     explicit DataItem(const QString &title, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
-
-    //explicit DataItem(const QVector<QVariant> &data, int dbIndex, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
-
     virtual ~DataItem();
 
     DataItem *child(int number);
