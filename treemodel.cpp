@@ -44,7 +44,7 @@ TreeModel::~TreeModel()
 
 int TreeModel::columnCount(const QModelIndex & /* parent */) const
 {
-    return 2;//_rootItem->columnCount();
+    return _rootItem->columnCount();
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const
@@ -86,7 +86,15 @@ DataItem *TreeModel::getItem(const QModelIndex &index) const
 void TreeModel::onDataItemChanged(DataItem *item)
 {
     qDebug() << "TreeModel::dataItemChanged" << item->toString();
-    qDebug() << QString("UPDATE %1 set %4 = '%2' WHERE id = %3;").arg(item->dbTableName()).arg(item->title()).arg(item->id()).arg(item->dbTableField()) ;
+    qDebug() << QString("UPDATE %1 set %3 = (:val) WHERE id = %2;").arg(item->dbTableName()).arg(item->id()).arg(item->dbTableField())  << ":val" << item->title() ;
+
+    QSqlQuery q;
+
+    q.prepare(QString("UPDATE %1 set %3 = (:val) WHERE id = %2;").arg(item->dbTableName()).arg(item->id()).arg(item->dbTableField()) );
+    q.bindValue(":val", item->title());
+
+    q.exec();
+
 }
 
 void TreeModel::onNewDataItem(DataItem *item)
@@ -145,7 +153,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
             newItem = parentItem->insertChild(new Vehicle(QString("[new %1]").arg(i), -1, _rootItem));//!!!
 //            newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
         } else if (parentItem->level() == 0) {
-            newItem = parentItem->insertChild(new VehicleSpec(QString("[new spec %1]").arg(i), parentItem->id()));//!!!
+            newItem = parentItem->insertChild(new VehicleSpec(-1, QString("[new spec %1]").arg(i), parentItem->id()));//!!!
             //newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
 
         }
@@ -239,11 +247,12 @@ void TreeModel::setupModelData(DataItem *parent)
     while (species_q.next()) {
         Vehicle *v = Vehicle::findVehicleById(species_q.record().value(2).toInt());
 
-        int v_id = species_q.record().value(2).toInt();
+        int i_id = species_q.record().value(0).toInt();
         QString v_title = species_q.record().value(1).toString();
+        int v_id = species_q.record().value(2).toInt();
 
         DataItem *i = (v != nullptr) ? v->insertChild(
-                                           new VehicleSpec(v_title, v_id)
+                                           new VehicleSpec(i_id, v_title, v_id)
                                        )
                                      : nullptr;
 //        emit newDataItem(i);
