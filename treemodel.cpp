@@ -133,31 +133,13 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
 
     beginInsertRows(parent, position, position + rows - 1);
     for (int i = 0; i < rows; i++) {
-
-
-        //DataItem *selectedItem =
-        //todo: refactor it
-
-        //selectionModel()->
-
-        qDebug() << parentItem->level() << parentItem->toString();//->insertSql();
-
         DataItem *newItem = nullptr;
-
-//        newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
-
         if (parentItem->level() == -1) {
             newItem = parentItem->insertChild(new Vehicle(QString("[new %1]").arg(i), -1, _rootItem));//!!!
-//            newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
         } else if (parentItem->level() == 0) {
             newItem = parentItem->insertChild(new VehicleSpec(-1, QString("[new spec %1]").arg(i), parentItem->id()));//!!!
-            //newItem = parentItem->insertChild(position, -1, QString("[new %1]").arg(i), parentItem->dbChildTableName(), "vehicle_species");//!!!
-
         }
-
-
         if (newItem) emit newDataItem(newItem);
-
     }
     endInsertRows();
 
@@ -234,12 +216,9 @@ void TreeModel::setupModelData(DataItem *parent)
 
     while (vehicles_q.next()) {
         DataItem *i = _rootItem->insertChild(
-
                     new Vehicle(vehicles_q.record().value(1).toString(), vehicles_q.record().value(0).toInt(), _rootItem)
                     );
-//        emit newDataItem(i);
     }
-
 
     while (species_q.next()) {
         Vehicle *v = Vehicle::findVehicleById(species_q.record().value(2).toInt());
@@ -252,7 +231,6 @@ void TreeModel::setupModelData(DataItem *parent)
                                            new VehicleSpec(i_id, v_title, v_id)
                                        )
                                      : nullptr;
-//        emit newDataItem(i);
     }
 
 }

@@ -14,7 +14,7 @@ public:
 
     //explicit DataItem(const QVector<QVariant> &data, int dbIndex, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
 
-    ~DataItem();
+    virtual ~DataItem();
 
     DataItem *child(int number);
     int childCount() const;
@@ -57,6 +57,8 @@ public:
     virtual QString dbTableField() const { return QString("[undef]"); }
 
     virtual QSqlQuery prepareInsertSqlQuery() const { return QSqlQuery(); }
+
+    QSqlQuery prepareDeleteSqlQuery() const;
 
 
 protected:
