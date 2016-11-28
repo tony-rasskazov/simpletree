@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QModelIndex>
+#include <QSqlDatabase>
 #include <QSqlError>
 
 class DataModel;
@@ -16,6 +17,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 public:
     MainWindow(QWidget *parent = 0);
+
+    QSqlDatabase& db();
 
 public slots:
     void updateActions();
@@ -31,13 +34,11 @@ private slots:
 
     void on_toolButton_newVehicleModel_clicked();
 
-    QSqlError addConnection(const QString &driver, const QString &dbName, const QString &host, const QString &user, const QString &passwd, int port);
-    void addConnection();
-
-    void on_actionConnect_DB_triggered();
+    void refresh();
 
 private:
     DataModel *_model;
+    QSqlDatabase _db;
 };
 
 #endif // MAINWINDOW_H

@@ -7,7 +7,7 @@
 class Vehicle : public DataItem
 {
 public:
-    explicit Vehicle(const QString _title, int id, DataItem *parent);
+    explicit Vehicle(const QString _title, int id, QSqlDatabase &db, DataItem *parent);
 
     static Vehicle *findVehicleById(int id);
 

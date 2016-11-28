@@ -17,7 +17,7 @@ class DataModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    DataModel(const QStringList &headers, QObject *parent = 0);
+    DataModel(const QStringList &headers, QSqlDatabase &db, QObject *parent = 0);
     ~DataModel();
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
@@ -38,6 +38,12 @@ public:
 
     DataItem *getItem(const QModelIndex &index) const;
 
+    QSqlError addConnection(const QString &driver, const QString &dbName, const QString &host,
+                                        const QString &user, const QString &passwd, int port);
+
+    void addConnection();
+
+
 signals:
     void dataItemChanged(DataItem *item);
     void newDataItem(DataItem *item);
@@ -51,7 +57,7 @@ private:
 
     DataItem *_rootItem;
 
-    QSqlDatabase _db;
+    QSqlDatabase &_db;
     bool _dbOk;
 };
 

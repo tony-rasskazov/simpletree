@@ -8,7 +8,7 @@ class Vehicle;
 class VehicleSpec : public DataItem
 {
 public:
-    explicit VehicleSpec(int id, const QString title, int parentId);
+    explicit VehicleSpec(int id, const QString title, QSqlDatabase &db, int parentId);
 
     QString dbTableField() const override { return QString("model"); }
     QSqlQuery prepareInsertSqlQuery() const override;

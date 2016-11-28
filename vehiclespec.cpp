@@ -6,8 +6,8 @@
 
 #include "vehicle.h"
 
-VehicleSpec::VehicleSpec(int id, const QString title, int parentId)
-    : DataItem(title, id, "vehicle_species", "", Vehicle::findVehicleById(parentId))
+VehicleSpec::VehicleSpec(int id, const QString title, QSqlDatabase & db, int parentId)
+    : DataItem(title, id, db, "vehicle_species", "", Vehicle::findVehicleById(parentId))
     , _parentId(parentId)
 {
 
@@ -16,7 +16,7 @@ VehicleSpec::VehicleSpec(int id, const QString title, int parentId)
 QSqlQuery VehicleSpec::prepareInsertSqlQuery() const
 {
 
-    QSqlQuery q;
+    QSqlQuery q(_db);
     q.prepare(QString("INSERT INTO %1 (%2, v_id) VALUES (:title, :parent_id)").arg(dbTableName()).arg(dbTableField()));//.arg(title()).arg(_parentId) ;
     q.bindValue(":title", title());
     q.bindValue(":parent_id", _parentId);

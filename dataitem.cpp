@@ -5,7 +5,7 @@
 
 #include <QDebug>
 
-DataItem::DataItem(const QString &title, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent)
+DataItem::DataItem(const QString &title, int id, QSqlDatabase &db, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent)
     : _level(parent == nullptr ? -1 : parent->_level + 1)
     , _dbTableName(dbTableName)
     , _dbChildTableName(dbChildTableName)
@@ -14,6 +14,7 @@ DataItem::DataItem(const QString &title, int id, const QString &dbTableName, con
     , _title(title)
     , _parentItem(parent)
     , _dbParentIndex(-1)
+    , _db(db)
 {
 }
 
@@ -163,14 +164,14 @@ QString DataItem::toString() const
 
 QSqlQuery DataItem::prepareDeleteSqlQuery() const
 {
-    QSqlQuery q;
+    QSqlQuery q(_db);
     q.prepare(QString("DELETE FROM %1 WHERE id=%2").arg(dbTableName()).arg(id()) );
     return q;
 }
 
 QSqlQuery DataItem::prepareUpdateSqlQuery() const
 {
-    QSqlQuery q;
+    QSqlQuery q(_db);
     q.prepare(QString("UPDATE %1 set %3 = (:val) WHERE id = %2;").arg(dbTableName()).arg(id()).arg(dbTableField()) );
     q.bindValue(":val", title());
     return q;

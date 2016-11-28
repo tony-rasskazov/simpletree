@@ -10,7 +10,7 @@
 class DataItem
 {
 public:
-    explicit DataItem(const QString &title, int id, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
+    explicit DataItem(const QString &title, int id, QSqlDatabase &db, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent = nullptr);
     virtual ~DataItem();
 
     DataItem *child(int number);
@@ -60,6 +60,7 @@ public:
 
 protected:
     int _id;
+    QSqlDatabase &_db;
 
 private:
     int _level;

@@ -4,8 +4,8 @@
 
 QHash<int, Vehicle*> Vehicle::s_byId = QHash<int, Vehicle*>();
 
-Vehicle::Vehicle(const QString _title, int id, DataItem *parent)
-    : DataItem(_title, id, "vehicles", "vehicle_species", parent)
+Vehicle::Vehicle(const QString _title, int id, QSqlDatabase &db, DataItem *parent)
+    : DataItem(_title, id, db, "vehicles", "vehicle_species", parent)
 {
     s_byId[_id] = this;
 }
@@ -16,7 +16,7 @@ Vehicle *Vehicle::findVehicleById(int id)
 }
 
 QSqlQuery Vehicle::prepareInsertSqlQuery() const {
-    QSqlQuery q;
+    QSqlQuery q(_db);
 
     q.prepare(QString("INSERT INTO %1 (%2) VALUES (?)").arg(dbTableName()).arg(dbTableField()) );
     q.bindValue(0, title());
