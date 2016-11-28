@@ -7,11 +7,10 @@ QSqlConnectionDialog::QSqlConnectionDialog(QWidget *parent)
     : QDialog(parent)
 {
     ui.setupUi(this);
+    useInMemoryDatabase();
 
     QStringList drivers = QSqlDatabase::drivers();
 
-    drivers << "QPSQL";
-    // remove compat names
     drivers.removeAll("QMYSQL3");
     drivers.removeAll("QOCI8");
     drivers.removeAll("QODBC3");
