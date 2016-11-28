@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QModelIndex>
+#include <QSqlError>
 
 class DataModel;
 
@@ -29,6 +30,11 @@ private slots:
     void on_toolButton_newVehicle_clicked();
 
     void on_toolButton_newVehicleModel_clicked();
+
+    QSqlError addConnection(const QString &driver, const QString &dbName, const QString &host, const QString &user, const QString &passwd, int port);
+    void addConnection();
+
+    void on_actionConnect_DB_triggered();
 
 private:
     DataModel *_model;

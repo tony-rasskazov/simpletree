@@ -88,6 +88,7 @@
     <property name="title">
      <string>DB</string>
     </property>
+    <addaction name="actionConnect_DB"/>
     <addaction name="actionApply_changes"/>
    </widget>
    <addaction name="fileMenu"/>
@@ -113,7 +114,7 @@
     <string>E&amp;xit</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Q</string>
+    <string>Meta+Q</string>
    </property>
   </action>
   <action name="insertVehicleAction">
@@ -124,7 +125,7 @@
     <string>Add vehicle</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+V</string>
+    <string>Meta+V</string>
    </property>
   </action>
   <action name="removeVehicleAction">
@@ -143,7 +144,7 @@
     <string>Add Vehicle Model</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+N</string>
+    <string>Meta+N</string>
    </property>
   </action>
   <action name="actionApply_changes">
@@ -152,6 +153,14 @@
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="actionConnect_DB">
+   <property name="text">
+    <string>Connect DB</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+O</string>
    </property>
   </action>
  </widget>
