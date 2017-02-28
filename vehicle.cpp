@@ -12,7 +12,7 @@ Vehicle::Vehicle(const QString _title, int id, QSqlDatabase &db, DataItem *paren
 
 Vehicle *Vehicle::findVehicleById(int id)
 {
-    return s_byId.value(id, nullptr);
+    return s_byId.value(id, 0);
 }
 
 QSqlQuery Vehicle::prepareInsertSqlQuery() const {

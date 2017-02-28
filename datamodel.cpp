@@ -1,4 +1,3 @@
-#include <QtWidgets>
 
 #include <QSqlQuery>
 
@@ -34,8 +33,8 @@ DataModel::DataModel(const QStringList &headers, QSqlDatabase &db, QObject *pare
     qDebug() << (_dbOk ? "TreeModel::TreeModel db connected" : "TreeModel::TreeModel db NOT connected!");
     */
 
-    connect(this, &DataModel::dataItemChanged, this, &DataModel::onDataItemChanged);
-    connect(this, &DataModel::newDataItem, this, &DataModel::onNewDataItem);
+    connect(this, SIGNAL(dataItemChanged(DataItem*)), this, SLOT(onDataItemChanged(DataItem*)));
+    connect(this, SIGNAL(newDataItem(DataItem*)), this, SLOT(onNewDataItem(DataItem*)));
 
     addConnection();
 
@@ -134,7 +133,7 @@ bool DataModel::insertRows(int position, int rows, const QModelIndex &parent)
 
     beginInsertRows(parent, position, position + rows - 1);
     for (int i = 0; i < rows; i++) {
-        DataItem *newItem = nullptr;
+        DataItem *newItem = 0;
 
         if (parentItem->level() == -1) {
             newItem = _rootItem->insertChild(new Vehicle(QString("[new %1!]").arg(i), -1, _db, _rootItem));//!!!
@@ -234,10 +233,10 @@ void DataModel::setupModelData(DataItem *parent)
         QString v_title = species_q.record().value(1).toString();
         int v_id = species_q.record().value(2).toInt();
 
-        DataItem *i = (v != nullptr) ? v->insertChild(
+        DataItem *i = (v != 0) ? v->insertChild(
                                            new VehicleSpec(i_id, v_title, _db, v_id)
                                        )
-                                     : nullptr;
+                                     : 0;
     }
 
 }

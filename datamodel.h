@@ -10,6 +10,8 @@
 #include <QAbstractItemModel>
 #include <QSqlDatabase>
 
+#define Q_DECL_OVERRIDE
+
 class DataItem;
 
 class DataModel : public QAbstractItemModel

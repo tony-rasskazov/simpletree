@@ -6,7 +6,7 @@
 #include <QDebug>
 
 DataItem::DataItem(const QString &title, int id, QSqlDatabase &db, const QString &dbTableName, const QString &dbChildTableName, DataItem *parent)
-    : _level(parent == nullptr ? -1 : parent->_level + 1)
+    : _level(parent == 0 ? -1 : parent->_level + 1)
     , _dbTableName(dbTableName)
     , _dbChildTableName(dbChildTableName)
     , _changed(false)
@@ -61,7 +61,7 @@ bool DataItem::removeChildren(int position, int count)
         return false;
 
     for (int row = 0; row < count; ++row) {
-        auto c = _childItems.takeAt(position);
+        DataItem *c = _childItems.takeAt(position);
         QSqlQuery q = c->prepareDeleteSqlQuery();
         q.exec();
         delete c;
@@ -72,13 +72,16 @@ bool DataItem::removeChildren(int position, int count)
 
 DataItem *DataItem::getChildById(int id)
 {
-    return _childItemsById.value(id, nullptr);
+    return _childItemsById.value(id, 0);
 }
 
 QVariant DataItem::data(int column) const
 {
     if (_level == -1) {
-        return QList<QString>({"title", "id"}).at(column);
+        QList<QString> header;
+        header << "title";
+        header << "id";
+        return header.at(column);
     } else {
 
         return column == 0 ? _title : column == 1 ? _id : QVariant();

@@ -19,15 +19,21 @@ MainWindow::MainWindow(QWidget *parent)
     _model = new DataModel(headers, _db);
     view->setModel(_model);
 
-    connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+//    connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+    connect(exitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
 
-    connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::updateActions);
+//    connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::updateActions);
+    connect(view->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(updateActions()));
 
-    connect(actionsMenu, &QMenu::aboutToShow, this, &MainWindow::updateActions);
+//    connect(actionsMenu, &QMenu::aboutToShow, this, &MainWindow::updateActions);
+    connect(actionsMenu, SIGNAL(aboutToShow()), this, SLOT(updateActions()));
 
-    connect(insertVehicleAction, &QAction::triggered, this, &MainWindow::insertVehicle);
-    connect(removeVehicleAction, &QAction::triggered, this, &MainWindow::removeVehicle);
-    connect(addVehicleModelAction, &QAction::triggered, this, &MainWindow::insertVehicleSpec);
+//    connect(insertVehicleAction, &QAction::triggered, this, &MainWindow::insertVehicle);
+    connect(insertVehicleAction, SIGNAL(triggered(bool)), this, SLOT(insertVehicle()));
+
+    connect(removeVehicleAction, SIGNAL(triggered(bool)), this, SLOT(removeVehicle()));
+
+    connect(addVehicleModelAction, SIGNAL(triggered(bool)), this, SLOT(insertVehicle()));
 
     updateActions();
     resizeAllColumnsToContents();
